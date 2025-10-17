@@ -1,5 +1,8 @@
 #! /bin/sh
 
+export QT_QPA_PLATFORMTHEME=qt5ct
+export QT_QPA_PLATFORMTHEME=qt6ct
+
 # --- Configuración del SSH-Agent ---
 
 # Inicia el agente solo si no está corriendo.
@@ -40,11 +43,6 @@ sxhkd &
 xfsettingsd &
 picom &
 feh --bg-fill /home/netenebrae/Pictures/Wallpapers/anime-girl-red-eyes-white-hair-8k-wallpaper-uhdpaper.com-264\@5\@b.jpg 
-
-export QT_QPA_PLATFORMTHEME=qt5ct
-export QT_QPA_PLATFORMTHEME=qt6ct
-
-
 
 ~/.config/polybar/./launch.sh
 
