@@ -49,6 +49,3 @@ export QT_QPA_PLATFORMTHEME=qt6ct
 ~/.config/polybar/./launch.sh
 
 bspc config focus_follows_pointer true
-
-
-
