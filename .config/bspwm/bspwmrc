@@ -44,8 +44,6 @@ feh --bg-fill /home/netenebrae/Pictures/Wallpapers/anime-girl-red-eyes-white-hai
 export QT_QPA_PLATFORMTHEME=qt5ct
 export QT_QPA_PLATFORMTHEME=qt6ct
 
-
-
 ~/.config/polybar/./launch.sh
 
 bspc config focus_follows_pointer true
