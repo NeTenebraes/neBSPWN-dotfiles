@@ -5,9 +5,34 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Archivo de historial y tamaño
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+
+# Opciones recomendadas
+setopt INC_APPEND_HISTORY       # Guarda cada comando al ejecutarlo
+setopt SHARE_HISTORY            # Comparte historial entre terminales
+setopt HIST_IGNORE_DUPS         # Evita duplicados
+setopt HIST_REDUCE_BLANKS       # Ignora líneas vacías
+
 # Created by newuser for 5.9
-source ~/powerlevel10k/powerlevel10k.zsh-theme
-source ~/powerlevel10k/powerlevel10k.zsh-theme
+source /opt/powerlevel10k/powerlevel10k.zsh-theme
+source /opt/powerlevel10k/powerlevel10k.zsh-theme
+
+# Sistema de autocompletado nativo
+autoload -U compinit
+compinit
+
+# Muestra menú de sugerencias al presionar dos veces TAB
+zstyle ':completion:*' menu select
+
+# Permitir autocompletar alias
+setopt completealiases
+
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#ff5555'
+
+
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -77,3 +102,5 @@ bindkey '^X^X' exchange-point-and-mark
 
 # Limpiar la pantalla de la terminal (Ctrl + L)
 bindkey '^L' clear-screen
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
