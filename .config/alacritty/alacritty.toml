@@ -1,0 +1,23 @@
+# ~/.config/alacritty/alacritty.toml
+
+[font]
+normal = { family = "Monospace" }
+size = 6.0
+
+[colors.primary]
+background = "#1d1f21"  # Color de fondo, puedes usar hex RGB o 0xRRGGBB
+foreground = "#CCFFFF"  # Color del texto (letras)
+
+[cursor]
+style = "Block"
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[window.padding]
+x = 10
+y = 10
+
+[window]
+dynamic_title = true
