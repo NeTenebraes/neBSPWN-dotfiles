@@ -1,0 +1,1 @@
+/home/netenebrae/.p10k.zsh
