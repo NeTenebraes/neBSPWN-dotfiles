@@ -1,0 +1,32 @@
+[palettes.rojo_hacker]
+red1 = "#f42841"
+red2 = "#ff6b7a"
+red3 = "#b91c2c"
+orange = "#ff8f4a"
+yellow = "#ffcc00"
+gray = "#f0f0f0"
+
+[character]
+success_symbol = "[└─➜](bold #f42841)"
+error_symbol = "[└─➜](bold #ff6b7a)"
+
+[username]
+style_user = "bold #f42841"
+style_root = "bold #b91c2c"
+format = "[$user](bold #f42841) "
+
+[directory]
+style = "bold #ff8f4a"
+truncation_length = 3
+
+[git_branch]
+symbol = " 🌿 "
+style = "bold #ffcc00"
+
+[time]
+disabled = false
+time_format = "%H:%M:%S GMT-5"
+style = "bold #ff6b7a"
+
+[palettes.default]
+palette = "rojo_hacker"

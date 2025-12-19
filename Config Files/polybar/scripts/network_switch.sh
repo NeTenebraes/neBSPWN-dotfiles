@@ -81,17 +81,6 @@ get_icon() {
     # Eliminar el número entre paréntesis para encontrar el ícono correcto
     local base_name=$(echo "$1" | sed -E 's/\([0-9]+\)//')
 
-    case "$base_name" in
-        "USB") echo "" ;;
-        "Docker") echo "" ;;
-        "vbox") echo "" ;;
-        "vmware") echo "" ;;
-        "VM") echo "" ;;
-        "VPN") echo "" ;;
-        "Wi-Fi") echo "" ;;
-        "ETH") echo "" ;;
-        *) echo "" ;;
-    esac
 }
 
 # Obtener el nombre formateado y el ícono
@@ -102,5 +91,5 @@ icon=$(get_icon "$short_name")
 if [ -n "$ip_addr" ]; then
     echo "$icon $short_name: $ip_addr"
 else
-    echo "$icon $short_name: (sin IP)"
+    echo "$icon $short_name: N/A"
 fi
