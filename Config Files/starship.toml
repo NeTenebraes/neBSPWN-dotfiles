@@ -1,32 +1,78 @@
-[palettes.rojo_hacker]
+[palettes.NeTenebrae]
+# ROJOS
 red1 = "#f42841"
-red2 = "#ff6b7a"
+red2 = "#ff6b7a" 
 red3 = "#b91c2c"
-orange = "#ff8f4a"
-yellow = "#ffcc00"
-gray = "#f0f0f0"
+red4 = "#ef4444"
+red5 = "#dc2626"
+red6 = "#b91c1c"
+
+# NARANJAS
+orange1 = "#ff8f4a"
+orange2 = "#f97316"
+orange3 = "#ea580c"
+
+# AMARILLOS
+yellow1 = "#ffcc00"
+yellow2 = "#eab308"
+yellow3 = "#ca8a04"
+
+# CYANS/VERDES
+cyan1 = "#06b6d4"
+cyan2 = "#0891b2"
+green1 = "#10b981"
+green2 = "#059669"
+
+# AZULES/VIOLETAS
+blue1 = "#3b82f6"
+blue2 = "#1d4ed8"
+purple1 = "#8b5cf6"
+purple2 = "#6d28d9"
+
+# GRIS/NEUTROS
+gray1 = "#f0f0f0"
+gray2 = "#d1d5db"
+gray3 = "#9ca3af"
+black = "#111827"
+white = "#f9fafb"
+
+# HACKER EXTRAS
+matrix_green = "#00ff41"
+blood_red = "#8b0000"
+neon_pink = "#ff1493"
+acid_yellow = "#bfff00"
+cyber_blue = "#00bfff"
 
 [character]
 success_symbol = "[└─➜](bold #f42841)"
 error_symbol = "[└─➜](bold #ff6b7a)"
 
 [username]
+show_always = true
 style_user = "bold #f42841"
 style_root = "bold #b91c2c"
-format = "[$user](bold #f42841) "
+format = "[$user](bold #f0f0f0)@"
 
 [directory]
-style = "bold #ff8f4a"
-truncation_length = 3
+style = "bold #3b82f6"
+truncation_length = 6
 
 [git_branch]
-symbol = " 🌿 "
-style = "bold #ffcc00"
+symbol = "󰘬 "
+style = "bold #bfff00"
 
 [time]
 disabled = false
 time_format = "%H:%M:%S GMT-5"
 style = "bold #ff6b7a"
 
+[cmd_duration]
+disabled = false
+style = "bold orange1"
+min_time = 5000
+
+[jobs]
+disabled = true
+
 [palettes.default]
-palette = "rojo_hacker"
+palette = "NeTenebrae"
