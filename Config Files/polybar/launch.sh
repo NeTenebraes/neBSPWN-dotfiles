@@ -9,15 +9,4 @@ killall -q polybar
 while pgrep -u $UID -x polybar >/dev/null; do sleep 1; done
 
 ## Launch
-
-## Left bar
-polybar log -c ~/.config/polybar/current.ini &
-polybar secondary -c ~/.config/polybar/current.ini &
-polybar localip -c ~/.config/polybar/current.ini &
-
-## Center bar
-polybar workspaces -c ~/.config/polybar/current.ini &
-
-## Right bar
-polybar top -c ~/.config/polybar/current.ini &
-polybar primary -c ~/.config/polybar/current.ini &
+polybar necyber -c ~/.config/polybar/current.ini &

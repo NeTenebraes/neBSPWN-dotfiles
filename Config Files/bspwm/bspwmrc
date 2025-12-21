@@ -10,21 +10,23 @@ pgrep -u "$USER" ssh-agent > /dev/null || ssh-agent -s > /tmp/ssh-agent.sh
 
 
 # --- Resto de la configuración de bspwm ---
-bspc monitor -d I II III IV V VI VII VIII IX X
+bspc monitor -d I II III IV V
 
+xsetroot -cursor_name left_ptr
 bspc config border_width        2
 bspc config window_gap          3
-bspc config gap 				10
 bspc config top_padding 		20
 
 bspc config split_ratio          0.50
 bspc config borderless_monocle   false
 bspc config gapless_monocle      true
 
-bspc config focus_follows_pointer false 
-bspc config pointer_action move
+bspc config focus_follows_pointer true 
 
 bspc config pointer_modifier mod4
+bspc config pointer_action1 move
+bspc config pointer_action2 resize_side
+
 
 bspc rule -a MEGAsync state=floating follow=on
 bspc rule -a Nm-applet state=floating center=on

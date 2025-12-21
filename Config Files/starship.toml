@@ -44,8 +44,8 @@ acid_yellow = "#bfff00"
 cyber_blue = "#00bfff"
 
 [character]
-success_symbol = "[└─➜](bold #f42841)"
-error_symbol = "[└─➜](bold #ff6b7a)"
+success_symbol = "[█▒░➜](bold #f42841)"
+error_symbol = "[█▒░✗](bold #ff6b7a)"
 
 [username]
 show_always = true

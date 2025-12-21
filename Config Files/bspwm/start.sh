@@ -9,7 +9,7 @@ pgrep polkit-gnome-authentication-agent-1 && pkill polkit-gnome-authentication-a
 pgrep nm-applet || nm-applet &
 pgrep megasync || megasync &
 pgrep polkit-gnome-authentication-agent-1 || /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
-pgrep blueberry || blueberry &
+pgrep blueberry-tray || blueberry-tray &
 
 pgrep unclutter || unclutter -idle 5 -root &
 
