@@ -5,7 +5,10 @@
 set -e
 
 DOTFILES_REPO="https://github.com/NeTenebraes/neBSPWN-dotfiles.git"
-DOTFILES_DIR="$HOME/Github/neBSPWN-dotfiles"
+DOTFILES_DIR="$HOME/.config/neBSPWN-dotfiles"  # ← CORREGIDO: repo aislado
+CONFIG_SRC="$DOTFILES_DIR/Config Files"        # ← NUEVO
+HOME_SRC="$DOTFILES_DIR/Home files"            # ← NUEVO
+SDDM_THEME_SRC="$DOTFILES_DIR/SDDM"            # ← CORREGIDO
 
 # Temas (cambia aquí)
 THEME_GTK="catppuccin-mocha-lavender-standard+default"
@@ -15,17 +18,18 @@ THEME_WM="catppuccin-mocha-lavender-standard+default"
 CURSOR_SIZE="16"
 
 SDDM_THEME_NAME="netenebrae"
-SDDM_THEME_SRC="$DOTFILES_DIR/SDDM"              # <- carpeta entera
 SDDM_THEME_DIR="/usr/share/sddm/themes"
 SDDM_THEME_DST="$SDDM_THEME_DIR/$SDDM_THEME_NAME"
+SDDM_Wall="$HOME/.config/bspwm/lightdm.jpg"
 
 # Limpiar comillas
 THEME_CURSOR_CLEAN="${THEME_CURSOR//\'/}"
 CURSOR_SIZE_CLEAN="${CURSOR_SIZE//\'/}"
-WALLPAPER_PATH="$HOME/.config/bspwm/lightdm.jpg"
+
 
 PKGS_PACMAN=(
-    "git" "base-devel" "neovim" "wget" "curl" "unzip" "stow"
+    # Essencials
+    "git" "base-devel" "neovim" "wget" "curl" "unzip"
     "bspwm" "sxhkd" "polybar" "picom" "kitty" "rofi" "dunst"
     "feh" "scrot" "xorg" "xorg-xinit"
     "zsh" "tmux" "htop" "bat" "lsd" "sddm"
@@ -140,11 +144,74 @@ setup_zsh() {
 }
 
 deploy_dotfiles() {
-    echo_msg "Dotfiles..."
+    echo_msg "🚀 Dotfiles COMPLETOS..."
+    
+    # 1. Clonar repo si no existe
     [ ! -d "$DOTFILES_DIR" ] && git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
+    
+    # 2. Config Files + Home Files (NUEVO)
+    deploy_custom_files
+    
+    # 3. Stow tradicional (opcional, si tienes paquetes individuales)
     cd "$DOTFILES_DIR" && stow -v bspwm polybar kitty rofi zsh dunst picom sxhkd 2>/dev/null || true
-    echo_ok "Dotfiles OK"
+    
+    echo_ok "🚀 Dotfiles 100% OK"
 }
+
+deploy_custom_files() {
+    echo_msg "📁 Deploy Config Files + Home Files..."
+
+    # CONFIG FILES -> ~/.config/ (elimina y copia todo)
+    if [[ -d "$CONFIG_SRC" ]]; then
+        echo_msg "→ Config Files..."
+        mkdir -p "$HOME/.config"
+        
+        shopt -s dotglob nullglob
+        for item in "$CONFIG_SRC"/*; do
+            [[ ! -e "$item" ]] && continue
+            name="$(basename "$item")"
+            target="$HOME/.config/$name"
+            
+            if [[ -e "$target" ]]; then
+                rm -rf "$target"
+                echo_ok "🗑️  Eliminado: $name"
+            fi
+            
+            cp -rf "$item" "$target"
+            echo_ok "📥 Copiado: $name → ~/.config/"
+        done
+        shopt -u dotglob nullglob
+    else
+        echo_skip "No existe: $CONFIG_SRC"
+    fi
+
+    # HOME FILES -> $HOME/ (elimina y copia todo)
+    if [[ -d "$HOME_SRC" ]]; then
+        echo_msg "→ Home Files..."
+        
+        shopt -s dotglob nullglob
+        for item in "$HOME_SRC"/*; do
+            [[ ! -e "$item" ]] && continue
+            name="$(basename "$item")"
+            target="$HOME/$name"
+            
+            if [[ -e "$target" ]]; then
+                rm -rf "$target"
+                echo_ok "🗑️  Eliminado: $name"
+            fi
+            
+            cp -rf "$item" "$target"
+            echo_ok "📥 Copiado: $name → ~/"
+        done
+        shopt -u dotglob nullglob
+    else
+        echo_skip "No existe: $HOME_SRC"
+    fi
+    
+    echo_ok "📁 Config Files + Home Files 100% sincronizados"
+}
+
+
 
 setup_fonts() {
     echo_msg "Fuentes..."
