@@ -8,7 +8,6 @@ pgrep -u "$USER" ssh-agent > /dev/null || ssh-agent -s > /tmp/ssh-agent.sh
 # Carga las variables de entorno.
 [ -f /tmp/ssh-agent.sh ] && . /tmp/ssh-agent.sh
 
-
 # --- Resto de la configuración de bspwm ---
 bspc monitor -d I II III IV V
 
@@ -28,7 +27,8 @@ bspc config pointer_action1 move
 bspc config pointer_action2 resize_side
 
 
-bspc rule -a MEGAsync state=floating follow=on
+# Regla CORRECTA con tu nombre real
+bspc rule -a megasync state=floating rectangle=600x450+0+0 center=on sticky=on follow=on
 bspc rule -a Nm-applet state=floating center=on
 bspc rule -a Nm-connection-editor state=floating center=on
 

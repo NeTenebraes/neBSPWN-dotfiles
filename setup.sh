@@ -1,48 +1,115 @@
 #!/bin/bash
-# neBSPWN Post-Install - SIN ERRORES
-# Autor: NeTenebrae
+# neBSPWN Post-Install - IDEMPOTENTE ✅
+# Autor: NeTenebrae | @NeTenebraes
 
 set -e
 
 DOTFILES_REPO="https://github.com/NeTenebraes/neBSPWN-dotfiles.git"
 DOTFILES_DIR="$HOME/Github/neBSPWN-dotfiles"
-# Temas (cámbialos aquí)
-THEME_GTK="'catppuccin-mocha-lavender-standard+default'"
-THEME_ICONS="'Papirus-Dark'"
-THEME_CURSOR="'catppuccin-mocha-dark-cursors'"
-THEME_WM="'catppuccin-mocha-lavender-standard+default'"
-CURSOR_SIZE="'16'"
-# Agrega ESTAS 2 variables al inicio (después de las existentes)
-THEME_CURSOR_CLEAN="${THEME_CURSOR//\'/}"  # Quita comillas simples
-CURSOR_SIZE_CLEAN="${CURSOR_SIZE//\'/}"    # Quita comillas simples
-WALLPAPER_PATH="$HOME/.config/bspwm/lightdm.jpg"
 
+# Temas (cambia aquí)
+THEME_GTK="catppuccin-mocha-lavender-standard+default"
+THEME_ICONS="Papirus-Dark"
+THEME_CURSOR="catppuccin-mocha-dark-cursors"
+THEME_WM="catppuccin-mocha-lavender-standard+default"
+CURSOR_SIZE="16"
+
+SDDM_THEME_NAME="netenebrae"
+SDDM_THEME_SRC="$DOTFILES_DIR/SDDM"              # <- carpeta entera
+SDDM_THEME_DIR="/usr/share/sddm/themes"
+SDDM_THEME_DST="$SDDM_THEME_DIR/$SDDM_THEME_NAME"
+
+# Limpiar comillas
+THEME_CURSOR_CLEAN="${THEME_CURSOR//\'/}"
+CURSOR_SIZE_CLEAN="${CURSOR_SIZE//\'/}"
+WALLPAPER_PATH="$HOME/.config/bspwm/lightdm.jpg"
 
 PKGS_PACMAN=(
     "git" "base-devel" "neovim" "wget" "curl" "unzip" "stow"
     "bspwm" "sxhkd" "polybar" "picom" "kitty" "rofi" "dunst"
     "feh" "scrot" "xorg" "xorg-xinit"
-    "zsh" "tmux" "htop" "bat" "lsd" 
+    "zsh" "tmux" "htop" "bat" "lsd" "sddm"
     "zsh-syntax-highlighting" "zsh-autosuggestions"
     "python" "python-pip" "nodejs" "npm"
     "firefox" "ffmpeg" "vlc" "maim" "nemo" "xclip"
-    "qt5ct" 
-    "starship" "blueberry" "glib2" "glib2-devel" "libxml2"
+    "qt5ct" "starship" "blueberry" "glib2" "libxml2"
 )
 
 PKGS_AUR=(
-    "vscodium-bin" "megasync-bin"
+    "vscodium-bin" "megasync"
     "catppuccin-cursors-mocha" "papirus-icon-theme" "catppuccin-gtk-theme-mocha"
 )
 
 FONTS=(
     "ttf-jetbrains-mono-nerd"
-    "ttf-font-awesome" "ttf-font-awesome"
+    "ttf-font-awesome" 
     "noto-fonts-emoji" "adwaita-icon-theme"
 )
 
 echo_msg() { echo -e "\n\033[1;34m🛡️ $1\033[0m"; }
 echo_ok()  { echo -e "\033[1;32m✅ $1\033[0m"; }
+echo_skip(){ echo -e "\033[1;33m⏭️  $1\033[0m"; }
+
+# 🔧 FUNCIONES IDEMPOTENTES
+check_file_content() {
+    local file="$1" content="$2"
+    [[ -f "$file" ]] && cmp -s <(echo "$content") "$file"
+}
+
+setup_sddm() {
+    echo_msg "🌀 SDDM (tema $SDDM_THEME_NAME)..."
+
+    # 1. Copiar TODO SDDM/ -> /usr/share/sddm/themes/netenebrae
+    if [[ ! -d "$SDDM_THEME_SRC" ]]; then
+        echo_skip "No existe carpeta: $SDDM_THEME_SRC"
+        return
+    fi
+
+    sudo mkdir -p "$SDDM_THEME_DIR"
+
+    # Siempre sobrescribir: borrar destino y copiar limpio
+    if [[ -d "$SDDM_THEME_DST" ]]; then
+        sudo rm -rf "$SDDM_THEME_DST"
+    fi
+
+    sudo cp -r "$SDDM_THEME_SRC" "$SDDM_THEME_DST"
+    echo_ok "Tema sobrescrito en $SDDM_THEME_DST"
+
+    # 2. Config mínima para usarlo
+    sudo mkdir -p /etc/sddm.conf.d
+    local sddm_conf="/etc/sddm.conf.d/theme.conf"
+    local conf_content="[Theme]
+Current=$SDDM_THEME_NAME
+"
+
+    if ! sudo bash -c "cmp -s <(echo \"$conf_content\") \"$sddm_conf\" 2>/dev/null"; then
+        echo "$conf_content" | sudo tee "$sddm_conf" >/dev/null
+        echo_ok "SDDM configurado con tema: $SDDM_THEME_NAME"
+    else
+        echo_skip "Config SDDM ya usa $SDDM_THEME_NAME"
+    fi
+}
+
+
+write_if_needed() {
+    local file="$1" content="$2"
+    if ! check_file_content "$file" "$content"; then
+        echo "$content" > "$file"
+        echo_ok "Actualizado: $file"
+    else
+        echo_skip "Ya OK: $file"
+    fi
+}
+
+dconf_write_if_needed() {
+    local key="$1" value="$2"
+    if [[ "$(dconf read "$key" 2>/dev/null || echo 'NULL')" != "$value" ]]; then
+        dconf write "$key" "$value"
+        echo_ok "dconf: $key"
+    else
+        echo_skip "dconf OK: $key"
+    fi
+}
 
 install_paru() {
     command -v paru >/dev/null || {
@@ -50,38 +117,32 @@ install_paru() {
         git clone https://aur.archlinux.org/paru.git /tmp/paru
         cd /tmp/paru && makepkg -si --noconfirm && cd - && rm -rf /tmp/paru
         echo_ok "PARU OK"
-    }
+    } || echo_skip "PARU OK"
 }
 
 setup_zsh() {
     echo_msg "ZSH+Starship..."
     
-    # Verificar si ZSH ya es el shell actual
-    if [ "$SHELL" = "/usr/bin/zsh" ] || grep -q "^$USER:.*:/usr/bin/zsh$" /etc/passwd; then
-        echo_ok "ZSH ya configurado (shell actual)"
-    else
-        echo "🔄 Cambiando shell a ZSH..."
+    if [[ "$SHELL" != "/usr/bin/zsh" && ! "$(grep "^$USER:.*:/usr/bin/zsh$" /etc/passwd)" ]]; then
         chsh -s /usr/bin/zsh
-        echo_ok "ZSH configurado (reinicia sesión)"
+        echo_ok "ZSH configurado (reinicia)"
+    else
+        echo_skip "ZSH ya shell actual"
     fi
     
-    # Verificar e instalar Starship si no existe
     if ! command -v starship >/dev/null 2>&1; then
-        echo "🚀 Instalando Starship..."
         curl -sS https://starship.rs/install.sh | sh
         echo_ok "Starship instalado"
     else
-        echo_ok "Starship OK"
+        echo_skip "Starship OK"
     fi
-    
-    # Configurar ZSH con plugins (después de stow)
-    echo_ok "ZSH+Starship listo"
+    echo_ok "ZSH listo"
 }
 
-
 deploy_dotfiles() {
+    echo_msg "Dotfiles..."
     [ ! -d "$DOTFILES_DIR" ] && git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
-    cd "$DOTFILES_DIR" && stow bspwm polybar kitty rofi zsh dunst picom sxhkd 2>/dev/null || true
+    cd "$DOTFILES_DIR" && stow -v bspwm polybar kitty rofi zsh dunst picom sxhkd 2>/dev/null || true
     echo_ok "Dotfiles OK"
 }
 
@@ -93,45 +154,36 @@ setup_fonts() {
 }
 
 setup_themes() {
-    echo_msg "Temas básicos..."
+    echo_msg "🎨 Temas COMPLETOS (idempotente)..."
+    
+    # Instalar AUR themes
     paru -S --needed --noconfirm "${PKGS_AUR[@]}"
 
-    # === 1. XRESOURCES (BSPWM/NÚCLEO X11) ===
-    echo "🔹 XResources (BSPWM)..."
-    cat >> "$HOME/.Xresources" << EOF
-Xcursor.theme: $THEME_CURSOR_CLEAN
-Xcursor.size: $CURSOR_SIZE_CLEAN
-EOF
-    xrdb -merge "$HOME/.Xresources"
-    echo_ok "XResources OK"
+    # 1. XResources
+    local xres_content="Xcursor.theme: $THEME_CURSOR_CLEAN
+Xcursor.size: $CURSOR_SIZE_CLEAN"
+    write_if_needed "$HOME/.Xresources" "$xres_content"
+    xrdb -merge "$HOME/.Xresources" 2>/dev/null || true
 
-    # === 2. DEFAULT CURSOR (UNIVERSAL) ===
-    gsettings set org.gnome.desktop.interface cursor-size "$CURSOR_SIZE_CLEAN" 2>/dev/null || true
-    echo "🔹 Default Cursor..."
+    # 2. Default cursor universal
     mkdir -p "$HOME/.icons/default"
-    cat > "$HOME/.icons/default/index.theme" << EOF
-[Icon Theme]
-Inherits=$THEME_CURSOR_CLEAN
-EOF
-    echo_ok "Default OK"
+    local default_theme="[Icon Theme]
+Inherits=$THEME_CURSOR_CLEAN"
+    write_if_needed "$HOME/.icons/default/index.theme" "$default_theme"
 
-    # === 3. VARIABLES ENTORNO (PERMANENTE) ===
-    echo "🔹 Variables..."
+    # 3. Variables entorno PERMANENTES
     mkdir -p "$HOME/.config/environment.d"
-    cat > "$HOME/.config/environment.d/cursor.conf" << EOF
-XCURSOR_THEME=$THEME_CURSOR_CLEAN
+    local env_content="XCURSOR_THEME=$THEME_CURSOR_CLEAN
 XCURSOR_SIZE=$CURSOR_SIZE_CLEAN
-XCURSOR_PATH=$HOME/.icons:/usr/share/icons
-EOF
+XCURSOR_PATH=$HOME/.icons:/usr/share/icons"
+    write_if_needed "$HOME/.config/environment.d/cursor.conf" "$env_content"
 
-# === GTK 3/4 CONFIGS (REEMPLAZA COMPLETO) ===
-echo "Configurando GTK 3/4..."
-mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
-
-cat > "$HOME/.config/gtk-3.0/settings.ini" << EOF
-[Settings]
-gtk-theme-name=${THEME_GTK//\'/}
-gtk-icon-theme-name=${THEME_ICONS//\'/}
+    # 4. GTK 3/4 (SOLO UNA VEZ)
+    mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
+    
+    local gtk3_content="[Settings]
+gtk-theme-name=$THEME_GTK
+gtk-icon-theme-name=$THEME_ICONS
 gtk-cursor-theme-name=$THEME_CURSOR_CLEAN
 gtk-cursor-theme-size=$CURSOR_SIZE_CLEAN
 gtk-font-name=JetBrainsMono Nerd Font 11
@@ -139,97 +191,74 @@ gtk-application-prefer-dark-theme=true
 gtk-xft-antialias=1
 gtk-xft-hinting=1
 gtk-xft-hintstyle=hintfull
-gtk-xft-rgba=rgb
-EOF
-
-# GTK4 - CON VARIABLES (igual)
-cat > "$HOME/.config/gtk-4.0/settings.ini" << EOF
-[Settings]
-gtk-theme-name=${THEME_GTK//\'/}
-gtk-icon-theme-name=${THEME_ICONS//\'/}
+gtk-xft-rgba=rgb"
+    
+    local gtk4_content="[Settings]
+gtk-theme-name=$THEME_GTK
+gtk-icon-theme-name=$THEME_ICONS
 gtk-cursor-theme-name=$THEME_CURSOR_CLEAN
 gtk-cursor-theme-size=$CURSOR_SIZE_CLEAN
-gtk-font-name=JetBrainsMono Nerd Font 11
-EOF
+gtk-font-name=JetBrainsMono Nerd Font 11"
+    
+    write_if_needed "$HOME/.config/gtk-3.0/settings.ini" "$gtk3_content"
+    write_if_needed "$HOME/.config/gtk-4.0/settings.ini" "$gtk4_content"
 
-
-echo_ok "GTK 3/4 OK"
-
-    # === 5. QT Kvantum ===
-    echo "🔹 QT5..."
+    # 5. QT5ct (minimal)
     mkdir -p "$HOME/.config/qt5ct"
-    cat > "$HOME/.config/qt5ct/qt5ct.conf" << EOF
-[Appearance]
+    local qt5_content="[Appearance]
 theme=kvantum
 [Fonts]
-font=JetBrainsMono Nerd Font,11,-1,5,50,0,0,0,0,0
-EOF
-    echo_ok "QT OK"
+font=JetBrainsMono Nerd Font,11,-1,5,50,0,0,0,0,0"
+    write_if_needed "$HOME/.config/qt5ct/qt5ct.conf" "$qt5_content"
 
-    dconf write /org/blueberry/use-symbolic-icons false
-    dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
+    # 6. dconf GNOME/Cinnamon/MATE (idempotente)
+    local themes=(gnome cinnamon mate)
+    local dconf_paths=(
+        "/org/gnome/desktop/interface/"
+        "/org/cinnamon/desktop/interface/"
+        "/org/mate/interface/"
+    )
+    
+    for i in "${!themes[@]}"; do
+        local de="${themes[$i]}"
+        local path="${dconf_paths[$i]}"
+        
+        dconf_write_if_needed "${path}gtk-theme" "'$THEME_GTK'"
+        dconf_write_if_needed "${path}icon-theme" "'$THEME_ICONS'"
+        dconf_write_if_needed "${path}cursor-theme" "'$THEME_CURSOR'"
+        dconf_write_if_needed "${path}gtk-key-theme" "'Default'"
+    done
 
-    # QT Kvantum
-    mkdir -p "$HOME/.config/qt5ct"
-    {
-        echo "[Appearance]"
-        echo "theme=kvantum"
-    } > "$HOME/.config/qt5ct/qt5ct.conf"
+    # WM themes
+    dconf_write_if_needed "/org/cinnamon/desktop/wm/preferences/theme" "'$THEME_WM'"
+    dconf_write_if_needed "/org/cinnamon/desktop/wm/preferences/theme-backup" "'$THEME_WM'"
+    dconf_write_if_needed "/org/gnome/desktop/wm/preferences/theme" "'$THEME_WM'"
 
-    # Slick-greeter (usuario lightdm)
-    sudo -u lightdm dbus-launch dconf write /x/dm/slick-greeter/cursor-theme-name "$THEME_CURSOR"
-    sudo -u lightdm dbus-launch dconf write /x/dm/slick-greeter/icon-theme-name "$THEME_ICONS"
-    sudo -u lightdm dbus-launch dconf write /x/dm/slick-greeter/theme-name "$THEME_GTK"
+    # Extras
+    dconf_write_if_needed "/org/blueberry/use-symbolic-icons" "false"
+    dconf_write_if_needed "/org/gnome/desktop/interface/color-scheme" "'prefer-dark'"
 
-    # GNOME interface
-    dconf write /org/gnome/desktop/interface/gtk-theme "$THEME_GTK"
-    dconf write /org/gnome/desktop/interface/icon-theme "$THEME_ICONS"
-    dconf write /org/gnome/desktop/interface/cursor-theme "$THEME_CURSOR"
-    dconf write /org/gnome/desktop/interface/gtk-key-theme "'Default'"
+    # 7. LightDM (slick-greeter)
+    sudo -u lightdm dbus-launch dconf write "/x/dm/slick-greeter/cursor-theme-name" "'$THEME_CURSOR'" 2>/dev/null || true
+    sudo -u lightdm dbus-launch dconf write "/x/dm/slick-greeter/icon-theme-name" "'$THEME_ICONS'" 2>/dev/null || true
+    sudo -u lightdm dbus-launch dconf write "/x/dm/slick-greeter/theme-name" "'$THEME_GTK'" 2>/dev/null || true
 
-    # Cinnamon interface
-    dconf write /org/cinnamon/desktop/interface/gtk-theme "$THEME_GTK"
-    dconf write /org/cinnamon/desktop/interface/icon-theme "$THEME_ICONS"
-    dconf write /org/cinnamon/desktop/interface/cursor-theme "$THEME_CURSOR"
-    dconf write /org/cinnamon/desktop/interface/gtk-key-theme "'Default'"
-
-    # Cinnamon / GNOME WM
-    dconf write /org/cinnamon/desktop/wm/preferences/theme "$THEME_WM"
-    dconf write /org/cinnamon/desktop/wm/preferences/theme-backup "$THEME_WM"
-    dconf write /org/gnome/desktop/wm/preferences/theme "$THEME_WM"
-
-    # MATE (si aplica)
-    dconf write /org/mate/interface/gtk-theme "$THEME_GTK"
-    dconf write /org/mate/interface/icon-theme "$THEME_ICONS"
-    dconf write /org/mate/interface/cursor-theme "$THEME_CURSOR"
-    dconf write /org/mate/interface/gtk-key-theme "'Default'"
-
-    # Backups de Cinnamon
-    dconf write /org/cinnamon/desktop/interface/gtk-theme-backup "$THEME_GTK"
-    dconf write /org/cinnamon/desktop/interface/icon-theme-backup "$THEME_ICONS"
-
-    # GNOME key theme (igual en todos)
-    dconf write /org/gnome/desktop/interface/gtk-key-theme "'Default'"
-
-    # MATE interface
-    dconf write /org/mate/interface/gtk-theme "$THEME_GTK"
-    dconf write /org/mate/interface/icon-theme "$THEME_ICONS"
-    dconf write /org/mate/interface/gtk-key-theme "'Default'"
-
-echo_ok "Temas OK"
+    echo_ok "🎨 Temas 100% OK"
 }
 
-# EXEC
-[ "$EUID" -eq 0 ] && { echo "No root"; exit 1; }
+# 🚀 EJECUCIÓN
+[ "$EUID" -eq 0 ] && { echo "❌ No root"; exit 1; }
 
-echo_msg "🚀 neBSPWN Setup"
+echo_msg "🚀 neBSPWN Setup $(date +'%H:%M')"
 sudo pacman -Syu --noconfirm
 sudo pacman -S --needed --noconfirm "${PKGS_PACMAN[@]}"
+
+setup_sddm
 setup_fonts
 install_paru
 setup_themes
 setup_zsh
 deploy_dotfiles
 
-echo_ok "¡LISTO! Reinicia: startx"
-echo "🌿 Starship + BSPWM + Kitty | @NeTenebraes"
+echo_ok "🎉 ¡LISTO! Reinicia: startx"
+echo "🌿 Starship + BSPWM + Kitty | @NeTenebraes 💀"
