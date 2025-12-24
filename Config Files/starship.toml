@@ -1,78 +1,73 @@
+# TEMA HACKER / RED TEAM para STARSHIP
+# Modified for: NeTenebrae
+
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$cmd_duration\
+$line_break\
+$character"""
+
+# Usamos tu paleta personalizada
+palette = "NeTenebrae"
+
 [palettes.NeTenebrae]
-# ROJOS
+# Tu paleta original intacta
 red1 = "#f42841"
 red2 = "#ff6b7a" 
 red3 = "#b91c2c"
-red4 = "#ef4444"
-red5 = "#dc2626"
-red6 = "#b91c1c"
-
-# NARANJAS
-orange1 = "#ff8f4a"
-orange2 = "#f97316"
-orange3 = "#ea580c"
-
-# AMARILLOS
-yellow1 = "#ffcc00"
-yellow2 = "#eab308"
-yellow3 = "#ca8a04"
-
-# CYANS/VERDES
-cyan1 = "#06b6d4"
-cyan2 = "#0891b2"
-green1 = "#10b981"
-green2 = "#059669"
-
-# AZULES/VIOLETAS
-blue1 = "#3b82f6"
-blue2 = "#1d4ed8"
-purple1 = "#8b5cf6"
-purple2 = "#6d28d9"
-
-# GRIS/NEUTROS
+blood_red = "#8b0000"
 gray1 = "#f0f0f0"
 gray2 = "#d1d5db"
-gray3 = "#9ca3af"
-black = "#111827"
-white = "#f9fafb"
-
-# HACKER EXTRAS
-matrix_green = "#00ff41"
-blood_red = "#8b0000"
-neon_pink = "#ff1493"
-acid_yellow = "#bfff00"
-cyber_blue = "#00bfff"
+gray3 = "#6E6E6E" # Gris medio para directorios
+white = "#ffffff"
+black = "#050505"
 
 [character]
-success_symbol = "[█▒░➜](bold #f42841)"
-error_symbol = "[█▒░✗](bold #ff6b7a)"
+# El cursor ahora es más técnico. Si falla el comando, cambia a una X roja brillante.
+success_symbol = "[➜](bold red1)[_](bold gray3)"
+error_symbol = "[✗](bold red2)[_](bold gray3)"
 
 [username]
 show_always = true
-style_user = "bold #f42841"
-style_root = "bold #b91c2c"
-format = "[$user](bold #f0f0f0)@"
+style_user = "bold red1"
+style_root = "bold blood_red"
+format = "[$user]($style)[@](bold gray3)"
+
+[hostname]
+ssh_only = false
+format = "[$hostname](bold gray2):"
+disabled = false
 
 [directory]
-style = "bold #3b82f6"
-truncation_length = 6
+# CAMBIO CLAVE: De azul a rojo/gris para mantener el tema
+style = "bold gray1"
+read_only = " 🔒"
+truncation_length = 4
+truncation_symbol = "../"
+format = "[$path]($style)[$read_only]($style) "
 
 [git_branch]
-symbol = "󰘬 "
-style = "bold #bfff00"
+symbol = " "
+# Ramas de git en rojo suave en lugar de amarillo
+style = "bold red2"
+format = "on [$symbol$branch]($style) "
+
+[git_status]
+style = "bold red1"
+format = "([$all_status$ahead_behind]($style) )"
 
 [time]
 disabled = false
-time_format = "%H:%M:%S GMT-5"
-style = "bold #ff6b7a"
+time_format = "%H:%M"
+# La hora en gris oscuro para no distraer
+style = "bold gray3"
+format = "[$time]($style) "
 
 [cmd_duration]
-disabled = false
-style = "bold orange1"
-min_time = 5000
-
-[jobs]
-disabled = true
-
-[palettes.default]
-palette = "NeTenebrae"
+min_time = 2000
+style = "bold red2"
+format = "took [$duration]($style) "
