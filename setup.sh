@@ -16,6 +16,7 @@ THEME_GTK="catppuccin-mocha-lavender-standard+default"
 THEME_ICONS="Papirus-Dark"
 THEME_CURSOR="catppuccin-mocha-dark-cursors"
 THEME_WM="catppuccin-mocha-lavender-standard+default"
+THEME_FONT="JetBrainsMono Nerd Font 11"
 CURSOR_SIZE="16"
 FONT_NAME=""
 
@@ -40,8 +41,11 @@ PKGS_PACMAN_optionals=(
 )
 
 PKGS_AUR=(
-    "vscodium-bin" "megasync"
     "catppuccin-cursors-mocha" "papirus-icon-theme" "catppuccin-gtk-theme-mocha"
+)
+
+PKGS_AUR_Optionals=(
+    "vscodium-bin" "megasync"
 )
 
 echo_msg() { echo -e "\n\033[1;34m🛡️ $1\033[0m"; }
@@ -76,21 +80,50 @@ dconf_write_if_needed() {
 }
 
 setup_dependecies() {
+    # 1. PARU (Obligatorio - Si no existe se compila)
     command -v paru >/dev/null || {
-        echo_msg "PARU..."
+        echo_msg "Instalando PARU..."
         # URL FIX
         git clone https://aur.archlinux.org/paru.git /tmp/paru
         cd /tmp/paru && makepkg -si --noconfirm && cd - && rm -rf /tmp/paru
-        echo_ok "PARU OK"
-    } || echo_skip "PARU OK"
+        echo_ok "PARU Instalado"
+    } || echo_skip "PARU ya estaba instalado"
 
+    # 2. Dependencias Esenciales Pacman (Obligatorio)
+    echo_msg "📦 Instalando dependencias esenciales (Pacman)..."
     sudo pacman -S --needed --noconfirm "${PKGS_PACMAN_Essencials[@]}"
-    sudo pacman -S --needed --noconfirm "${PKGS_PACMAN_optionals[@]}"
-    paru -S --needed "${PKGS_AUR[@]}"
 
+    # 3. Dependencias Opcionales Pacman (Interactivo)
+    echo -e "\n¿Deseas instalar las dependencias opcionales de Pacman? (y/N)"
+    read -r -p " > " response_pacman
+    if [[ "$response_pacman" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo_msg "📦 Instalando opcionales (Pacman)..."
+        sudo pacman -S --needed --noconfirm "${PKGS_PACMAN_optionals[@]}"
+        echo_ok "Opcionales Pacman instaladas"
+    else
+        echo_skip "Saltando opcionales Pacman"
+    fi
+
+    # 4. Paquetes AUR Esenciales (Obligatorio)
+    echo_msg "📦 Instalando paquetes AUR esenciales..."
+    paru -S --needed --noconfirm "${PKGS_AUR[@]}"
+
+    # 5. Paquetes AUR Opcionales (Interactivo - NUEVO)
+    echo -e "\n¿Deseas instalar las dependencias opcionales de AUR? (y/N)"
+    echo -e "   (Incluye: ${PKGS_AUR_Optionals[*]})"
+    read -r -p " > " response_aur
+    if [[ "$response_aur" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo_msg "📦 Instalando opcionales (AUR)..."
+        paru -S --needed --noconfirm "${PKGS_AUR_Optionals[@]}"
+        echo_ok "Opcionales AUR instaladas"
+    else
+        echo_skip "Saltando opcionales AUR"
+    fi
+
+    # 6. Cache de fuentes
     fc-cache -fv
 
-    # 🔥 CLONE ÚNICO AQUÍ
+    # 7. Clonado del Repo
     echo_msg "📥 CLONANDO REPO DOTFILES..."
     local tmp_repo="/tmp/neBSPWN-dotfiles"
     
@@ -99,14 +132,16 @@ setup_dependecies() {
     
     echo_ok "✅ Repo clonado → $tmp_repo"
     
-    # EXPORTA variable global para usar en otras funciones
+    # EXPORTA variable global
     export NE_TMP_REPO="$tmp_repo"
     
     echo_ok "Fuentes + Repo OK"
 }
 
+
+
 setup_themes() {
-    echo_msg "🎨 Temas COMPLETOS (idempotente)..."
+    echo_msg "🎨 Temas COMPLETOS..."
     
     local xres_content="Xcursor.theme: $THEME_CURSOR_CLEAN
 Xcursor.size: $CURSOR_SIZE_CLEAN"
@@ -134,7 +169,7 @@ gtk-theme-name=$THEME_GTK
 gtk-icon-theme-name=$THEME_ICONS
 gtk-cursor-theme-name=$THEME_CURSOR_CLEAN
 gtk-cursor-theme-size=$CURSOR_SIZE_CLEAN
-gtk-font-name=JetBrainsMono Nerd Font 11
+gtk-font-name=$THEME_FONT
 gtk-application-prefer-dark-theme=true
 gtk-xft-antialias=1
 gtk-xft-hinting=1
@@ -146,7 +181,7 @@ gtk-theme-name=$THEME_GTK
 gtk-icon-theme-name=$THEME_ICONS
 gtk-cursor-theme-name=$THEME_CURSOR_CLEAN
 gtk-cursor-theme-size=$CURSOR_SIZE_CLEAN
-gtk-font-name=JetBrainsMono Nerd Font 11"
+gtk-font-name=$THEME_FONT"
 
     write_if_needed "$HOME/.config/gtk-3.0/settings.ini" "$gtk3_content"
     write_if_needed "$HOME/.config/gtk-4.0/settings.ini" "$gtk4_content"
@@ -274,7 +309,7 @@ InputMethod=qtvirtualkeyboard" | sudo tee /etc/sddm.conf.d/virtualkbd.conf >/dev
         sudo systemctl enable sddm
     fi
 
-    echo_ok "✅ SDDM Listo (Variante Black Hole)"
+    echo_ok "✅ SDDM Listo"
 }
 
 setup_zsh() {
@@ -287,7 +322,6 @@ setup_zsh() {
     fi
 
     if ! command -v starship >/dev/null 2>&1; then
-        # URL FIX
         curl -sS https://starship.rs/install.sh | sh
         echo_ok "Starship instalado"
     else
@@ -302,7 +336,6 @@ deploy_dotfiles() {
     local config_src="$tmp_repo/Config Files"
     local home_src="$tmp_repo/Home files"
 
-    # CONFIG FILES -> ~/.config/ (BORRA Y REEMPLAZA)
     if [[ -d "$config_src" ]]; then
         echo_msg "📁 Config Files → ~/.config/"
         mkdir -p "$HOME/.config"
