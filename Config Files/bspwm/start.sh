@@ -13,5 +13,6 @@ pgrep blueberry-tray || blueberry-tray &
 
 pgrep unclutter || unclutter -idle 5 -root &
 
-# Opcional: ssh-add si se decide cargar clave
-# ssh-add ~/.ssh/id_rsa
+killall -q conky
+
+(sleep 3 && conky -c /home/netenebrae/.config/conky/conky.conf) &

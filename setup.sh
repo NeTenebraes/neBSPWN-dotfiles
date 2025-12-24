@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# neBSPWN Post-Install - DESTRUCTIVO & LIMPIO 💀
 # Autor: NeTenebrae | @NeTenebraes
 # Updated: Black Hole SDDM Integration
 
@@ -8,11 +7,10 @@ set -e
 
 DOTFILES_REPO="https://github.com/NeTenebraes/neBSPWN-dotfiles.git"
 DOTFILES_DIR="$HOME/.config/neBSPWN-dotfiles"
-
 # Nota: CONFIG_SRC y HOME_SRC se definen dinámicamente en deploy_dotfiles
 
 # Temas
-THEME_DEFAULT="catppuccin-mocha-red-standard+default"
+THEME_DEFAULT="catppuccin-mocha-mauve-standard+default"
 THEME_CURSOR="catppuccin-mocha-dark-cursors"
 THEME_ICONS="Papirus-Dark"
 CURSOR_SIZE="16"
@@ -31,7 +29,6 @@ PKGS_PACMAN_Essencials=(
     "ttf-jetbrains-mono-nerd" "ttf-font-awesome" "noto-fonts-emoji" "ttf-iosevka-nerd"  
     "adwaita-icon-theme" 
     "kvantum" "kvantum-qt5" "xdg-desktop-portal" "xdg-desktop-portal-gtk" "qt5ct" "qt6ct"
-
 )
 
 PKGS_PACMAN_optionals=(
@@ -227,6 +224,65 @@ gtk-font-name=$THEME_FONT"
     echo_ok "🎨 Temas 100% OK"
 }
 
+setup_dns() {
+    echo_msg "🌐 CONFIGURACIÓN DNS"
+    echo -e "\nSelecciona tu proveedor DNS preferido:"
+    echo "  1) Cloudflare (1.1.1.1) - [Recomendado: Velocidad/Privacidad]"
+    echo "  2) Quad9      (9.9.9.9) - [Bloqueo de Malware]"
+    echo "  3) Google     (8.8.8.8) - [Estándar]"
+    echo "  4) Automático (ISP)     - [Por defecto de tu proveedor]"
+    echo "  5) Saltar configuración"
+    
+    read -r -p " > " dns_choice
+
+    local target_ips=""
+    local provider_name=""
+
+    case "$dns_choice" in
+        1) target_ips="1.1.1.1 1.0.0.1"; provider_name="Cloudflare" ;;
+        2) target_ips="9.9.9.9 149.112.112.112"; provider_name="Quad9" ;;
+        3) target_ips="8.8.8.8 8.8.4.4"; provider_name="Google" ;;
+        4) target_ips="auto"; provider_name="ISP (Auto)" ;;
+        *) echo_skip "Saltando configuración DNS"; return 0 ;;
+    esac
+
+    # Detectar conexión
+    if ! command -v nmcli >/dev/null; then
+        echo_err "NetworkManager no encontrado."
+        return 1
+    fi
+
+    local active_conn
+    active_conn=$(nmcli -t -f NAME connection show --active | head -n1)
+
+    if [[ -z "$active_conn" ]]; then
+        echo_skip "No hay conexión activa. Conéctate a internet primero."
+        return 0
+    fi
+
+    echo_msg "Aplicando $provider_name en conexión: '$active_conn'..."
+
+    # Aplicar cambios
+    if [[ "$target_ips" == "auto" ]]; then
+        nmcli con mod "$active_conn" ipv4.ignore-auto-dns no
+        nmcli con mod "$active_conn" ipv4.dns ""
+    else
+        nmcli con mod "$active_conn" ipv4.ignore-auto-dns yes
+        nmcli con mod "$active_conn" ipv4.dns "$target_ips"
+    fi
+
+    # Fix para /etc/resolv.conf en Arch
+    if [[ -L "/etc/resolv.conf" ]]; then
+        sudo rm -f /etc/resolv.conf
+        sudo systemctl restart NetworkManager
+        sleep 2
+        echo_ok "Enlace resolv.conf corregido."
+    else
+        nmcli con up "$active_conn" >/dev/null 2>&1
+    fi
+    
+    echo_ok "DNS configurado exitosamente: $provider_name"
+}
 
 # 🌀 Función SDDM Modularizada (Integrada)
 setup_sddm() {
@@ -485,6 +541,7 @@ setup_zsh
 deploy_dotfiles
 setup_qt
 setup_sddm
+setup_dns
 
 # Limpieza final
 rm -rf "$NE_TMP_REPO"
