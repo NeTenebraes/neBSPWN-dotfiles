@@ -442,7 +442,7 @@ setup_dependecies
 setup_themes
 setup_zsh
 deploy_dotfiles
-
+setup_qt
 # Ejecutamos la nueva función integrada
 setup_sddm
 
