@@ -44,7 +44,7 @@ bspc rule -a Rofi state=floating center=on
 pgrep picom >/dev/null || picom &
 pgrep sxhkd >/dev/null || sxhkd &
 pgrep xsettingsd >/dev/null || xsettingsd &
-pgrep feh >/dev/null || feh --bg-fill ~/.config/bspwm/wallpaper.jpg &
+pgrep feh >/dev/null || feh --bg-fill ~/.config/bspwm/wallpaper.png &
 ~/.config/polybar/launch.sh &
 
 #Support for custom startup

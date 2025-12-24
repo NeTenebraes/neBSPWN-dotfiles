@@ -29,8 +29,8 @@ PKGS_PACMAN_Essencials=(
     "zsh-syntax-highlighting" "zsh-autosuggestions" "python" "python-pip"
     "nodejs" "npm" "ffmpeg" "maim" "qt5ct" "starship" "blueberry"
     "glib2" "libxml2" "bspwm" "sxhkd" "polybar" "picom" "rofi" "dunst" "kitty"
-    "ttf-jetbrains-mono-nerd" "ttf-font-awesome" "noto-fonts-emoji"
-    "adwaita-icon-theme"
+    "ttf-jetbrains-mono-nerd" "ttf-font-awesome" "noto-fonts-emoji" "ttf-iosevka-nerd"
+    "adwaita-icon-theme" 
 )
 
 PKGS_PACMAN_optionals=(
