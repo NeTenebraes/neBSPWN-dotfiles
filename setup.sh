@@ -593,6 +593,7 @@ deploy_dotfiles
 setup_qt
 setup_sddm
 setup_dns
+setup_firewall
 
 # Limpieza final
 rm -rf "$NE_TMP_REPO"
