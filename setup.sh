@@ -526,6 +526,57 @@ EOF
     echo_ok "✅ Entorno Qt completado"
 }
 
+setup_firewall() {
+    echo_msg "🛡️ CONFIGURACIÓN DE FIREWALL (UFW)"
+    echo -e "\n¿Deseas instalar y configurar el Firewall (UFW) ahora? (y/N)"
+    read -r -p " > " ufw_choice
+
+    if [[ ! "$ufw_choice" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo_skip "Saltando configuración de Firewall."
+        return 0
+    fi
+
+    # 1. Instalación
+    echo_msg "Instalando paquetes UFW..."
+    # Usamos la variable de dependencias o instalamos directo
+    sudo pacman -S --needed --noconfirm ufw gufw
+
+    # 2. Resetear a estado limpio antes de configurar
+    # Esto evita conflictos si ya había reglas viejas
+    sudo ufw --force reset >/dev/null
+
+    # 3. Reglas Base (Bloquear todo lo entrante)
+    echo_msg "Aplicando políticas por defecto (Deny Incoming / Allow Outgoing)..."
+    sudo ufw default deny incoming
+    sudo ufw default allow outgoing
+
+    # 4. Preguntar por SSH
+    echo -e "\n¿Deseas permitir conexiones SSH entrantes (Puerto 22)? (y/N)"
+    echo "   (Útil si administras esta PC desde otro dispositivo)"
+    read -r -p " > " ssh_choice
+
+    if [[ "$ssh_choice" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        sudo ufw allow ssh
+        echo_ok "Regla SSH (Puerto 22) agregada."
+    else
+        echo_skip "SSH mantenido cerrado."
+    fi
+
+    # 5. Activar Firewall
+    echo_msg "Habilitando UFW..."
+    sudo ufw enable --force
+    sudo systemctl enable ufw --now
+
+    # 6. Verificación Final
+    if sudo ufw status | grep -q "active"; then
+        echo_ok "✅ Firewall configurado y ACTIVO."
+        echo -e "\nEstado actual:"
+        sudo ufw status verbose
+    else
+        echo_err "Hubo un problema activando UFW."
+    fi
+}
+
 
 # 🚀 EJECUCIÓN
 [ "$EUID" -eq 0 ] && { echo "❌ No root"; exit 1; }
