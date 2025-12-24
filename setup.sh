@@ -12,13 +12,11 @@ DOTFILES_DIR="$HOME/.config/neBSPWN-dotfiles"
 # Nota: CONFIG_SRC y HOME_SRC se definen dinámicamente en deploy_dotfiles
 
 # Temas
-THEME_GTK="catppuccin-mocha-lavender-standard+default"
+THEME_DEFAULT="catppuccin-mocha-lavender-standard+default"
+THEME_CURSOR="catppuccin-mocha-red-cursors"
 THEME_ICONS="Papirus-Dark"
-THEME_CURSOR="catppuccin-mocha-dark-cursors"
-THEME_WM="catppuccin-mocha-lavender-standard+default"
-THEME_FONT="JetBrainsMono Nerd Font 11"
 CURSOR_SIZE="16"
-FONT_NAME=""
+THEME_FONT="JetBrainsMono Nerd Font 11"
 
 # Limpiar comillas
 THEME_CURSOR_CLEAN="${THEME_CURSOR//\'/}"
@@ -95,6 +93,7 @@ setup_dependecies() {
 
     # 3. Dependencias Opcionales Pacman (Interactivo)
     echo -e "\n¿Deseas instalar las dependencias opcionales de Pacman? (y/N)"
+    echo -e "   (Incluye: ${PKGS_PACMAN_optionals[*]})"
     read -r -p " > " response_pacman
     if [[ "$response_pacman" =~ ^([yY][eE][sS]|[yY])$ ]]; then
         echo_msg "📦 Instalando opcionales (Pacman)..."
@@ -165,7 +164,7 @@ XCURSOR_PATH=$HOME/.icons:/usr/share/icons"
     mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
     
     local gtk3_content="[Settings]
-gtk-theme-name=$THEME_GTK
+gtk-theme-nameDEFAULT
 gtk-icon-theme-name=$THEME_ICONS
 gtk-cursor-theme-name=$THEME_CURSOR_CLEAN
 gtk-cursor-theme-size=$CURSOR_SIZE_CLEAN
@@ -177,7 +176,7 @@ gtk-xft-hintstyle=hintfull
 gtk-xft-rgba=rgb"
 
     local gtk4_content="[Settings]
-gtk-theme-name=$THEME_GTK
+gtk-theme-nameDEFAULT
 gtk-icon-theme-name=$THEME_ICONS
 gtk-cursor-theme-name=$THEME_CURSOR_CLEAN
 gtk-cursor-theme-size=$CURSOR_SIZE_CLEAN
@@ -197,16 +196,16 @@ gtk-font-name=$THEME_FONT"
     for i in "${!themes[@]}"; do
         local de="${themes[$i]}"
         local path="${dconf_paths[$i]}"
-        dconf_write_if_needed "${path}gtk-theme" "'$THEME_GTK'"
+        dconf_write_if_needed "${path}gtk-theme" "DEFAULT'"
         dconf_write_if_needed "${path}icon-theme" "'$THEME_ICONS'"
         dconf_write_if_needed "${path}cursor-theme" "'$THEME_CURSOR'"
         dconf_write_if_needed "${path}gtk-key-theme" "'Default'"
     done
 
     # WM themes
-    dconf_write_if_needed "/org/cinnamon/desktop/wm/preferences/theme" "'$THEME_WM'"
-    dconf_write_if_needed "/org/cinnamon/desktop/wm/preferences/theme-backup" "'$THEME_WM'"
-    dconf_write_if_needed "/org/gnome/desktop/wm/preferences/theme" "'$THEME_WM'"
+    dconf_write_if_needed "/org/cinnamon/desktop/wm/preferences/theme" "DEFAULT'"
+    dconf_write_if_needed "/org/cinnamon/desktop/wm/preferences/theme-backup" "DEFAULT'"
+    dconf_write_if_needed "/org/gnome/desktop/wm/preferences/theme" "DEFAULT'"
 
     # Extras
     dconf_write_if_needed "/org/blueberry/use-symbolic-icons" "false"
@@ -215,14 +214,14 @@ gtk-font-name=$THEME_FONT"
     # LightDM (slick-greeter)
     sudo -u lightdm dbus-launch dconf write "/x/dm/slick-greeter/cursor-theme-name" "'$THEME_CURSOR'" 2>/dev/null || true
     sudo -u lightdm dbus-launch dconf write "/x/dm/slick-greeter/icon-theme-name" "'$THEME_ICONS'" 2>/dev/null || true
-    sudo -u lightdm dbus-launch dconf write "/x/dm/slick-greeter/theme-name" "'$THEME_GTK'" 2>/dev/null || true
+    sudo -u lightdm dbus-launch dconf write "/x/dm/slick-greeter/theme-name" "DEFAULT'" 2>/dev/null || true
 
     echo_ok "🎨 Temas 100% OK"
 }
 
 # 🌀 Función SDDM Modularizada (Integrada)
 setup_sddm() {
-    echo_msg "🌀 Iniciando módulo SDDM (Astronaut - Black Hole)..."
+    echo_msg "🌀 Iniciando módulo SDDM..."
 
     # Variables Locales
     local THEME_DEST_NAME="netenebrae"
@@ -476,7 +475,6 @@ setup_themes
 setup_zsh
 deploy_dotfiles
 setup_qt
-# Ejecutamos la nueva función integrada
 setup_sddm
 
 # Limpieza final

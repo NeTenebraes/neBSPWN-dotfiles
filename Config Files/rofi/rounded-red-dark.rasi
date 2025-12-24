@@ -2,14 +2,30 @@
 /* Author: Newman Sanchez (https://github.com/newmanls) */
 
 * {
-    bg0:    #212121F2;
-    bg1:    #2A2A2A;
-    bg2:    #3D3D3D80;
-    bg3:    #E53935F2;
-    fg0:    #E6E6E6;
+    /* Fondo Principal: Negro casi puro con transparencia ligera (como tu panel lateral) */
+    bg0:    #050505F2;
+
+    /* Barra de búsqueda: Un gris muy oscuro para separar visualmente */
+    bg1:    #101010;
+
+    /* Elementos alternos / Mensajes: Un poco más claro */
+    bg2:    #1F1F1F80;
+
+    /* ACENTO: El Rojo vibrante de tu wallpaper (Sacado de la imagen) */
+    bg3:    #D90429F2;  /* Rojo sangre intenso */
+
+    /* Texto Principal: Blanco puro para máximo contraste */
+    fg0:    #FFFFFF;
+
+    /* Texto Secundario: Blanco brillante */
     fg1:    #FFFFFF;
-    fg2:    #969696;
-    fg3:    #3D3D3D;
+
+    /* Texto de placeholder / inactivo: Gris medio */
+    fg2:    #6E6E6E;
+
+    /* Texto sobre el color de acento (negro o blanco según preferencia) */
+    fg3:    #FFFFFF;
 }
+
 
 @import "~/.config/rofi/rounded-template.rasi"
