@@ -12,8 +12,8 @@ DOTFILES_DIR="$HOME/.config/neBSPWN-dotfiles"
 # Nota: CONFIG_SRC y HOME_SRC se definen dinámicamente en deploy_dotfiles
 
 # Temas
-THEME_DEFAULT="catppuccin-mocha-lavender-standard+default"
-THEME_CURSOR="catppuccin-mocha-red-cursors"
+THEME_DEFAULT="catppuccin-mocha-red-standard+default"
+THEME_CURSOR="catppuccin-mocha-dark-cursors"
 THEME_ICONS="Papirus-Dark"
 CURSOR_SIZE="16"
 THEME_FONT="JetBrainsMono Nerd Font 11"
@@ -160,11 +160,11 @@ XCURSOR_SIZE=$CURSOR_SIZE_CLEAN
 XCURSOR_PATH=$HOME/.icons:/usr/share/icons"
     write_if_needed "$HOME/.config/environment.d/cursor.conf" "$env_content"
 
-    # GTK 3/4
+    # GTK 3/4 (CORREGIDO: Faltaban el signo = y el valor correcto)
     mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
     
     local gtk3_content="[Settings]
-gtk-theme-nameDEFAULT
+gtk-theme-name=$THEME_DEFAULT
 gtk-icon-theme-name=$THEME_ICONS
 gtk-cursor-theme-name=$THEME_CURSOR_CLEAN
 gtk-cursor-theme-size=$CURSOR_SIZE_CLEAN
@@ -176,7 +176,7 @@ gtk-xft-hintstyle=hintfull
 gtk-xft-rgba=rgb"
 
     local gtk4_content="[Settings]
-gtk-theme-nameDEFAULT
+gtk-theme-name=$THEME_DEFAULT
 gtk-icon-theme-name=$THEME_ICONS
 gtk-cursor-theme-name=$THEME_CURSOR_CLEAN
 gtk-cursor-theme-size=$CURSOR_SIZE_CLEAN
@@ -185,7 +185,7 @@ gtk-font-name=$THEME_FONT"
     write_if_needed "$HOME/.config/gtk-3.0/settings.ini" "$gtk3_content"
     write_if_needed "$HOME/.config/gtk-4.0/settings.ini" "$gtk4_content"
 
-    # dconf GNOME/Cinnamon/MATE
+    # dconf GNOME/Cinnamon/MATE (CORREGIDO: Comillas GVariant)
     local themes=(gnome cinnamon mate)
     local dconf_paths=(
         "/org/gnome/desktop/interface/"
@@ -196,32 +196,37 @@ gtk-font-name=$THEME_FONT"
     for i in "${!themes[@]}"; do
         local de="${themes[$i]}"
         local path="${dconf_paths[$i]}"
-        dconf_write_if_needed "${path}gtk-theme" "DEFAULT'"
+        
+        # GVariant requiere que las cadenas estén entre comillas simples DENTRO de las dobles
+        # EJEMPLO CORRECTO: "'valor'"
+        
+        dconf_write_if_needed "${path}gtk-theme" "'$THEME_DEFAULT'"
         dconf_write_if_needed "${path}icon-theme" "'$THEME_ICONS'"
         dconf_write_if_needed "${path}cursor-theme" "'$THEME_CURSOR'"
         dconf_write_if_needed "${path}gtk-key-theme" "'Default'"
     done
 
-    # WM themes
-    dconf_write_if_needed "/org/cinnamon/desktop/wm/preferences/theme" "DEFAULT'"
-    dconf_write_if_needed "/org/cinnamon/desktop/wm/preferences/theme-backup" "DEFAULT'"
-    dconf_write_if_needed "/org/gnome/desktop/wm/preferences/theme" "DEFAULT'"
+    # WM themes (CORREGIDO)
+    dconf_write_if_needed "/org/cinnamon/desktop/wm/preferences/theme" "'$THEME_DEFAULT'"
+    dconf_write_if_needed "/org/cinnamon/desktop/wm/preferences/theme-backup" "'$THEME_DEFAULT'"
+    dconf_write_if_needed "/org/gnome/desktop/wm/preferences/theme" "'$THEME_DEFAULT'"
 
     # Extras
     dconf_write_if_needed "/org/blueberry/use-symbolic-icons" "false"
     dconf_write_if_needed "/org/gnome/desktop/interface/color-scheme" "'prefer-dark'"
 
-    # LightDM (slick-greeter)
+    # LightDM (slick-greeter) (CORREGIDO)
     sudo -u lightdm dbus-launch dconf write "/x/dm/slick-greeter/cursor-theme-name" "'$THEME_CURSOR'" 2>/dev/null || true
     sudo -u lightdm dbus-launch dconf write "/x/dm/slick-greeter/icon-theme-name" "'$THEME_ICONS'" 2>/dev/null || true
-    sudo -u lightdm dbus-launch dconf write "/x/dm/slick-greeter/theme-name" "DEFAULT'" 2>/dev/null || true
+    sudo -u lightdm dbus-launch dconf write "/x/dm/slick-greeter/theme-name" "'$THEME_DEFAULT'" 2>/dev/null || true
 
-
+    # Iconos Rojos (Papirus)
     wget -qO- https://git.io/papirus-folders-install | sh
     papirus-folders -C red --theme Papirus-Dark
 
     echo_ok "🎨 Temas 100% OK"
 }
+
 
 # 🌀 Función SDDM Modularizada (Integrada)
 setup_sddm() {
