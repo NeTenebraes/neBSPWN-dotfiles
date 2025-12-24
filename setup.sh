@@ -216,6 +216,10 @@ gtk-font-name=$THEME_FONT"
     sudo -u lightdm dbus-launch dconf write "/x/dm/slick-greeter/icon-theme-name" "'$THEME_ICONS'" 2>/dev/null || true
     sudo -u lightdm dbus-launch dconf write "/x/dm/slick-greeter/theme-name" "DEFAULT'" 2>/dev/null || true
 
+
+    wget -qO- https://git.io/papirus-folders-install | sh
+    papirus-folders -C red --theme Papirus-Dark
+
     echo_ok "🎨 Temas 100% OK"
 }
 
