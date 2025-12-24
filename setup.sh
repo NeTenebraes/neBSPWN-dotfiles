@@ -563,9 +563,10 @@ setup_firewall() {
     fi
 
     # 5. Activar Firewall
-    echo_msg "Habilitando UFW..."
-    sudo ufw enable --force
-    sudo systemctl enable ufw --now
+# Activa UFW respondiendo "y" automáticamente a cualquier advertencia
+echo "y" | sudo ufw enable
+sudo systemctl enable --now ufw
+
 
     # 6. Verificación Final
     if sudo ufw status | grep -q "active"; then
