@@ -3,6 +3,10 @@ HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242' 
+# ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=52'
+
 
 # Completado PRO
 autoload -U compinit
