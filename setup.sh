@@ -188,7 +188,7 @@ setup_sddm() {
     echo_msg "🌀 Iniciando módulo SDDM (Astronaut - Black Hole)..."
 
     # Variables Locales
-    local THEME_DEST_NAME="sddm-astronaut-theme"
+    local THEME_DEST_NAME="netenebrae"
     local THEMES_DIR="/usr/share/sddm/themes"
     local TARGET_DIR="$THEMES_DIR/$THEME_DEST_NAME"
     local METADATA="$TARGET_DIR/metadata.desktop"
@@ -221,8 +221,8 @@ setup_sddm() {
 
     # 3. Instalación Limpia
     if [[ -d "$TARGET_DIR" ]]; then
-        echo_msg "♻️  Backup tema anterior..."
-        sudo mv "$TARGET_DIR" "${TARGET_DIR}_backup_$DATE"
+        echo_msg "♻️  Removiendo tema anterior..."
+        sudo rm -fr "$TARGET_DIR"
     fi
     
     sudo mkdir -p "$TARGET_DIR"
@@ -252,7 +252,7 @@ InputMethod=qtvirtualkeyboard" | sudo tee /etc/sddm.conf.d/virtualkbd.conf >/dev
     
     echo_msg "⚫ Configurando variante: Black Hole"
     # Forzamos la configuración
-    sudo sed -i "s|^ConfigFile=.*|ConfigFile=Themes/black_hole.conf|" "$METADATA"
+    sudo sed -i "s|^ConfigFile=.*|ConfigFile=Themes/netenebrae.conf|" "$METADATA"
     
     # 5. Parche QML de compatibilidad (Heredado de tu script anterior por seguridad)
     local qml_file="$TARGET_DIR/Main.qml"
