@@ -1,0 +1,100 @@
+#!/bin/bash
+
+# Colores para la salida
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+echo -e "${GREEN}[*] Iniciando configuración de temas Qt (Edición BSPWM/Minimalista)...${NC}"
+
+# 1. Instalar paquetes necesarios
+echo "[*] Verificando e instalando paquetes..."
+if ! pacman -Qi qt5ct qt6ct kvantum > /dev/null 2>&1; then
+    sudo pacman -S --noconfirm qt5ct qt6ct kvantum
+else
+    echo -e "${GREEN}    Paquetes base ya instalados.${NC}"
+fi
+
+# Variables a inyectar
+VAR_NAME="QT_QPA_PLATFORMTHEME"
+VAR_VALUE="qt5ct"
+VAR_STYLE="QT_STYLE_OVERRIDE"
+VAL_STYLE="kvantum"
+
+# 2. Configurar BSPWM (Lo más importante para tu caso)
+BSPWM_CONFIG="$HOME/.config/bspwm/bspwmrc"
+XINIT_CONFIG="$HOME/.xinitrc"
+
+echo "[*] Configurando entorno de ventana (BSPWM)..."
+
+if [ -f "$BSPWM_CONFIG" ]; then
+    echo "    Detectado bspwmrc en $BSPWM_CONFIG"
+    
+    # Verificar si ya existe la configuración
+    if grep -q "$VAR_NAME" "$BSPWM_CONFIG"; then
+        echo -e "${GREEN}    Las variables ya parecen estar en bspwmrc.${NC}"
+    else
+        # Inyectar al principio del archivo (después del shebang)
+        # Creamos un archivo temporal
+        TEMP_FILE=$(mktemp)
+        
+        # Leemos la primera línea (#!/bin/bash o similar)
+        head -n 1 "$BSPWM_CONFIG" > "$TEMP_FILE"
+        
+        # Añadimos nuestras variables justo después
+        echo "" >> "$TEMP_FILE"
+        echo "# --- Configuración Auto-generada de Temas Qt ---" >> "$TEMP_FILE"
+        echo "export $VAR_NAME=$VAR_VALUE" >> "$TEMP_FILE"
+        echo "export $VAR_STYLE=$VAL_STYLE" >> "$TEMP_FILE"
+        echo "# -----------------------------------------------" >> "$TEMP_FILE"
+        echo "" >> "$TEMP_FILE"
+        
+        # Añadimos el resto del archivo original (saltando la primera línea)
+        tail -n +2 "$BSPWM_CONFIG" >> "$TEMP_FILE"
+        
+        # Reemplazamos el original
+        mv "$TEMP_FILE" "$BSPWM_CONFIG"
+        chmod +x "$BSPWM_CONFIG"
+        echo -e "${GREEN}    Variables inyectadas al inicio de bspwmrc.${NC}"
+    fi
+elif [ -f "$XINIT_CONFIG" ]; then
+    # Fallback a xinitrc si no existe bspwmrc (raro, pero posible)
+    echo "    No se encontró bspwmrc, revisando .xinitrc..."
+    if ! grep -q "$VAR_NAME" "$XINIT_CONFIG"; then
+        # Insertar antes de la línea que ejecuta bspwm o exec
+        sed -i "/exec bspwm/i export $VAR_NAME=$VAR_VALUE\nexport $VAR_STYLE=$VAL_STYLE" "$XINIT_CONFIG"
+        echo -e "${GREEN}    Variables añadidas a .xinitrc${NC}"
+    fi
+else
+    echo -e "${RED}    [!] No se encontró bspwmrc ni xinitrc. Tendrás que añadirlo manualmente.${NC}"
+fi
+
+# 3. Configurar /etc/environment (Respaldo global)
+ENV_FILE="/etc/environment"
+echo "[*] Configurando respaldo global en $ENV_FILE..."
+
+if grep -q "^$VAR_NAME" "$ENV_FILE"; then
+    CURRENT_VAL=$(grep "^$VAR_NAME" "$ENV_FILE" | cut -d'=' -f2)
+    if [ "$CURRENT_VAL" != "$VAR_VALUE" ]; then
+        sudo sed -i "s/^$VAR_NAME=.*/$VAR_NAME=$VAR_VALUE/" "$ENV_FILE"
+        echo "    Corregido valor global."
+    fi
+else
+    echo "$VAR_NAME=$VAR_VALUE" | sudo tee -a "$ENV_FILE" > /dev/null
+    echo "    Añadido a /etc/environment."
+fi
+
+# 4. Configurar .profile (Respaldo shell)
+USER_ENV_FILE="$HOME/.profile"
+echo "[*] Configurando respaldo shell en $USER_ENV_FILE..."
+if ! grep -q "export $VAR_NAME" "$USER_ENV_FILE"; then
+    echo "export $VAR_NAME=$VAR_VALUE" >> "$USER_ENV_FILE"
+fi
+
+echo -e "${GREEN}==============================================${NC}"
+echo -e "${GREEN}¡Listo! Configuración para BSPWM aplicada.${NC}"
+echo "Pasos finales:"
+echo "1. Abre una terminal y ejecuta 'kvantummanager' para elegir tu tema oscuro favorito."
+echo "2. Cierra sesión completamente (killall bspwm) y vuelve a entrar."
+echo "   (KeePassXC y VLC deberían verse oscuros automáticamente gracias a Kvantum)."
+echo -e "${GREEN}==============================================${NC}"
