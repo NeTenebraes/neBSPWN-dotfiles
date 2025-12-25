@@ -4,7 +4,7 @@
     
     # --- POSICIÓN: ABAJO A LA IZQUIERDA ---
     # Define la esquina de origen
-    origin = bottom-left
+    origin = bottom-right
     
     # Separación del borde (Horizontal x Vertical)
     # 30x30 da un margen estético para que no "toque" el marco del monitor
