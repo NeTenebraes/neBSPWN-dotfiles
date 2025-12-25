@@ -582,32 +582,31 @@ sudo systemctl enable --now ufw
 install_betterlockscreen_lock() {
     echo_msg "🔒 Configurando Betterlockscreen Lock..."
     
-    local IMAGE_REL_PATH="neBSPWN-dotfiles/Config Files/bspwm/lock.png"
+    local IMAGE_REL_PATH="Config Files/bspwm/lock.png"  # ← Quité "neBSPWN-dotfiles/"
     local tmp_repo="${NE_TMP_REPO:-/tmp/neBSPWN-dotfiles}"
-    local SRC_PATH="$tmp_repo/$IMAGE_REL_PATH"
+    local SRC_PATH="$tmp_repo/neBSPWN-dotfiles/$IMAGE_REL_PATH"  # ✅ Ruta doble correcta
     local DEST_DIR="$HOME/.config/betterlockscreen/rc"
     local LOCK_ICON_NAME="lock.png"
     
-    # 1) Verificar imagen en repo temporal (funciona ANTES de deploy_dotfiles)
+    # Verificar imagen
     if [[ ! -f "$SRC_PATH" ]]; then
         echo_err "Imagen no encontrada: $SRC_PATH"
-        echo "Verificando estructura del repo..."
-        find "$tmp_repo" -name "lock.png" 2>/dev/null || echo "No hay lock.png en repo"
+        echo "Debug: ls -la $(dirname "$SRC_PATH")"
+        ls -la "$tmp_repo"/neBSPWN-dotfiles/Config\ Files/bspwm/ 2>/dev/null || echo "Carpeta no existe"
         return 1
     fi
     
-    # 2) Instalar betterlockscreen si falta (agrega a PKGS_AUR si quieres auto-instalar)
+    # Resto igual...
     if ! command -v betterlockscreen >/dev/null 2>&1; then
-        echo_msg "📦 Instalando betterlockscreen (AUR)..."
+        echo_msg "📦 Instalando betterlockscreen..."
         paru -S --needed --noconfirm betterlockscreen
     fi
     
-    # 3) Crear directorios y copiar
     mkdir -p "$DEST_DIR"
     cp -f "$SRC_PATH" "$DEST_DIR/$LOCK_ICON_NAME"
     chmod 644 "$DEST_DIR/$LOCK_ICON_NAME"
     
-    # 4) Configurar .rc con tema Catppuccin (usando tus variables)
+    # Config .rc (igual)
     local rc_file="$HOME/.config/betterlockscreen/rc"
     if [[ ! -f "$rc_file" ]]; then
         cat > "$rc_file" << EOF
@@ -635,20 +634,10 @@ auth-color=#cdd6f4
 auth-size=60
 auth-font=sans-serif
 EOF
-        echo_ok "Config betterlockscreen: $rc_file"
+        echo_ok "Config: $rc_file"
     fi
     
     echo_ok "✅ Lock instalada: $DEST_DIR/$LOCK_ICON_NAME"
-    
-    # Hotkey para sxhkd (opcional)
-    local sxhkdrc="$HOME/.config/sxhkd/sxhkdrc"
-    if [[ -f "$sxhkdrc" ]] && ! grep -q "betterlockscreen" "$sxhkdrc"; then
-        echo "
-# Lock screen (Super + L)
-super + l
-    betterlockscreen -l dimblur" >> "$sxhkdrc"
-        echo_ok "Hotkey Super+L agregada a sxhkdrc"
-    fi
 }
 
 
