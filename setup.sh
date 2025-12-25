@@ -659,11 +659,12 @@ echo_msg "   Integración SDDM Black Hole Edition"
 
 sudo pacman -Syu --noconfirm
 
+
 setup_dependecies
+deploy_dotfiles
 install_betterlockscreen_lock
 setup_themes
 setup_zsh
-deploy_dotfiles
 setup_qt
 setup_sddm
 setup_dns
