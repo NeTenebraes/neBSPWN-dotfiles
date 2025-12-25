@@ -27,7 +27,7 @@ PKGS_PACMAN_Essencials=(
     "nodejs" "npm" "ffmpeg" "maim" "qt5ct" "qt6ct" "starship" "blueberry"
     "glib2" "libxml2" "bspwm" "sxhkd" "polybar" "picom" "rofi" "dunst" "kitty"
     "ttf-jetbrains-mono-nerd" "ttf-font-awesome" "noto-fonts-emoji" "ttf-iosevka-nerd"  
-    "adwaita-icon-theme" 
+    "adwaita-icon-theme" "libmtp" "gvfs-mtp" "android-udev"
     "kvantum" "kvantum-qt5" "xdg-desktop-portal" "xdg-desktop-portal-gtk" "qt5ct" "qt6ct"
 )
 
