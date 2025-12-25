@@ -582,38 +582,34 @@ sudo systemctl enable --now ufw
 install_betterlockscreen_lock() {
     echo_msg "🔒 Configurando Betterlockscreen Lock..."
     
-    local IMAGE_REL_PATH="Config Files/bspwm/lock.png"  # ← Quité "neBSPWN-dotfiles/"
+    local IMAGE_REL_PATH="Config Files/bspwm/lock.png"
     local tmp_repo="${NE_TMP_REPO:-/tmp/neBSPWN-dotfiles}"
-    local SRC_PATH="$tmp_repo/neBSPWN-dotfiles/$IMAGE_REL_PATH"  # ✅ Ruta doble correcta
-    local DEST_DIR="$HOME/.config/betterlockscreen/rc"
-    local LOCK_ICON_NAME="lock.png"
+    local SRC_PATH="$tmp_repo/$IMAGE_REL_PATH"
     
     # Verificar imagen
     if [[ ! -f "$SRC_PATH" ]]; then
         echo_err "Imagen no encontrada: $SRC_PATH"
-        echo "Debug: ls -la $(dirname "$SRC_PATH")"
-        ls -la "$tmp_repo"/neBSPWN-dotfiles/Config\ Files/bspwm/ 2>/dev/null || echo "Carpeta no existe"
         return 1
     fi
     
-    # Resto igual...
+    # Instalar si falta
     if ! command -v betterlockscreen >/dev/null 2>&1; then
         echo_msg "📦 Instalando betterlockscreen..."
         paru -S --needed --noconfirm betterlockscreen
     fi
     
+    local DEST_DIR="$HOME/.config/betterlockscreen/rc"
     mkdir -p "$DEST_DIR"
-    cp -f "$SRC_PATH" "$DEST_DIR/$LOCK_ICON_NAME"
-    chmod 644 "$DEST_DIR/$LOCK_ICON_NAME"
+    cp -f "$SRC_PATH" "$DEST_DIR/lock.png"
+    chmod 644 "$DEST_DIR/lock.png"
     
-    # Config .rc (igual)
-    local rc_file="$HOME/.config/betterlockscreen/rc"
-    if [[ ! -f "$rc_file" ]]; then
-        cat > "$rc_file" << EOF
+    # ✅ CONFIGURACIÓN AUTOMÁTICA (esto faltaba)
+    local rc_file="$DEST_DIR/rc"
+    cat > "$rc_file" << 'EOF'
 # neBSPWN Betterlockscreen - Catppuccin Mocha
 bg-fill=0
 bg-color=#1e1e2e
-bg-image=$DEST_DIR/$LOCK_ICON_NAME
+bg-image=$HOME/.config/betterlockscreen/rc/lock.png
 lock-text="Bloqueado"
 text-color=#cdd6f4
 ring-color=#cdd6f4
@@ -634,10 +630,27 @@ auth-color=#cdd6f4
 auth-size=60
 auth-font=sans-serif
 EOF
-        echo_ok "Config: $rc_file"
+    
+    echo_ok "✅ Config: $rc_file"
+    
+    # ✅ APLICA EL LOCK AUTOMÁTICAMENTE
+    echo_msg "🔐 Probando lock AUTOMÁTICO..."
+    betterlockscreen -u "$DEST_DIR/lock.png"
+    
+    # ✅ HOTKEY para sxhkd (Super + L)
+    local sxhkdrc="$HOME/.config/sxhkd/sxhkdrc"
+    if [[ -f "$sxhkdrc" ]] && ! grep -q "betterlockscreen" "$sxhkdrc"; then
+        {
+            echo ""
+            echo "# 🔒 Lock screen (Super + L)"
+            echo "super + l"
+            echo "    betterlockscreen -l dimblur"
+        } >> "$sxhkdrc"
+        echo_ok "Hotkey Super+L agregada a sxhkdrc"
+        pkill -USR1 sxhkd 2>/dev/null || true
     fi
     
-    echo_ok "✅ Lock instalada: $DEST_DIR/$LOCK_ICON_NAME"
+    echo_ok "🎉 Betterlockscreen COMPLETO (Super+L para bloquear)"
 }
 
 
@@ -662,6 +675,18 @@ install_betterlockscreen_lock
 
 
 # Limpieza final
-rm -rf "$NE_TMP_REPO"
+# ✅ DESPUÉS (pregunta confirmación)
+if [[ -n "${NE_TMP_REPO:-}" && -d "$NE_TMP_REPO" ]]; then
+    echo -e "\n🗑️  ¿Borrar repo temporal? ($NE_TMP_REPO)"
+    echo "   (Útil para debuggear betterlockscreen, SDDM, etc.) (y/N)"
+    read -r -p " > " delete_repo
+    if [[ "$delete_repo" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        rm -rf "$NE_TMP_REPO"
+        echo_ok "🗑️  Repo temporal borrado"
+    else
+        echo_skip "Manteniendo repo temporal: $NE_TMP_REPO"
+    fi
+fi
+
 
 echo_ok "🎉 ¡LISTO! Reinicia: systemctl reboot"
