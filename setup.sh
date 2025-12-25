@@ -78,7 +78,6 @@ setup_dependecies() {
     # 1. PARU (Obligatorio - Si no existe se compila)
     command -v paru >/dev/null || {
         echo_msg "Instalando PARU..."
-        # URL FIX
         git clone https://aur.archlinux.org/paru.git /tmp/paru
         cd /tmp/paru && makepkg -si --noconfirm && cd - && rm -rf /tmp/paru
         echo_ok "PARU Instalado"
@@ -104,7 +103,7 @@ setup_dependecies() {
     echo_msg "📦 Instalando paquetes AUR esenciales..."
     paru -S --needed --noconfirm "${PKGS_AUR[@]}"
 
-    # 5. Paquetes AUR Opcionales (Interactivo - NUEVO)
+    # 5. Paquetes AUR Opcionales (Interactivo)
     echo -e "\n¿Deseas instalar las dependencias opcionales de AUR? (y/N)"
     echo -e "   (Incluye: ${PKGS_AUR_Optionals[*]})"
     read -r -p " > " response_aur
@@ -119,22 +118,50 @@ setup_dependecies() {
     # 6. Cache de fuentes
     fc-cache -fv
 
-    # 7. Clonado del Repo
-    echo_msg "📥 CLONANDO REPO DOTFILES..."
+    # 7. Clonado/Actualización del Repo (INTERACTIVO) ✅ INTEGRADO
+    echo_msg "📥 GESTIONANDO REPO DOTFILES..."
     local tmp_repo="/tmp/neBSPWN-dotfiles"
-    
-    [[ -d "$tmp_repo" ]] && rm -rf "$tmp_repo"
-    git clone "$DOTFILES_REPO" "$tmp_repo"
-    
-    echo_ok "✅ Repo clonado → $tmp_repo"
-    
+
+    if [[ -d "$tmp_repo" ]]; then
+        echo -e "\n📂 Repo temporal YA EXISTE: $tmp_repo"
+        echo "  1) Actualizar (git pull)"
+        echo "  2) Mantener como está"
+        echo "  3) Borrar y clonar nuevo"
+        read -r -p "Opción [1-3]: " repo_action
+        
+        case "$repo_action" in
+            1|update|pull)
+                echo_msg "🔄 Actualizando repo..."
+                cd "$tmp_repo" && git pull origin main && cd - >/dev/null
+                echo_ok "✅ Repo actualizado"
+                ;;
+            2|keep|mantener)
+                echo_skip "Manteniendo repo existente"
+                ;;
+            3|delete|borrar|clone)
+                echo_msg "🗑️  Borrando y clonando nuevo..."
+                rm -rf "$tmp_repo"
+                git clone "$DOTFILES_REPO" "$tmp_repo"
+                echo_ok "✅ Repo clonado nuevo"
+                ;;
+            *)
+                echo_err "Opción inválida. Clonando nuevo..."
+                rm -rf "$tmp_repo"
+                git clone "$DOTFILES_REPO" "$tmp_repo"
+                echo_ok "✅ Repo clonado nuevo"
+                ;;
+        esac
+    else
+        echo_msg "📥 Clonando repo por primera vez..."
+        git clone "$DOTFILES_REPO" "$tmp_repo"
+        echo_ok "✅ Repo clonado → $tmp_repo"
+    fi
+
     # EXPORTA variable global
     export NE_TMP_REPO="$tmp_repo"
     
     echo_ok "Fuentes + Repo OK"
 }
-
-
 
 setup_themes() {
     echo_msg "🎨 Temas COMPLETOS..."
