@@ -36,7 +36,7 @@ PKGS_PACMAN_optionals=(
 )
 
 PKGS_AUR=(
-    "catppuccin-cursors-mocha" "papirus-icon-theme" "catppuccin-gtk-theme-mocha" "xautolock"
+    "betterlockscreen" "catppuccin-cursors-mocha" "papirus-icon-theme" "catppuccin-gtk-theme-mocha" "xautolock"
 )
 
 PKGS_AUR_Optionals=(
@@ -580,41 +580,41 @@ sudo systemctl enable --now ufw
 
 # Función para instalar lock.png de betterlockscreen usando variables existentes
 install_betterlockscreen_lock() {
-    set -e  # Ya lo tienes global
+    echo_msg "🔒 Configurando Betterlockscreen Lock..."
     
     local IMAGE_REL_PATH="neBSPWN-dotfiles/Config Files/bspwm/lock.png"
-    local SRC_PATH="$DOTFILES_DIR/$IMAGE_REL_PATH"
+    local tmp_repo="${NE_TMP_REPO:-/tmp/neBSPWN-dotfiles}"
+    local SRC_PATH="$tmp_repo/$IMAGE_REL_PATH"
     local DEST_DIR="$HOME/.config/betterlockscreen/rc"
     local LOCK_ICON_NAME="lock.png"
     
-    # 1) Verificar que el repositorio esté clonado y la imagen exista
-    if [[ ! -d "$DOTFILES_DIR" ]]; then
-        echo "Error: $DOTFILES_DIR no existe. Ejecuta deploy_dotfiles primero." >&2
-        return 1
-    fi
-    
+    # 1) Verificar imagen en repo temporal (funciona ANTES de deploy_dotfiles)
     if [[ ! -f "$SRC_PATH" ]]; then
-        echo "Error: Imagen no encontrada en $SRC_PATH" >&2
+        echo_err "Imagen no encontrada: $SRC_PATH"
+        echo "Verificando estructura del repo..."
+        find "$tmp_repo" -name "lock.png" 2>/dev/null || echo "No hay lock.png en repo"
         return 1
     fi
     
-    # 2) Crear directorios necesarios
-    mkdir -p "$DEST_DIR"
-    
-    # 3) Copiar imagen con backup si existe
-    if [[ -f "$DEST_DIR/$LOCK_ICON_NAME" ]]; then
-        mv "$DEST_DIR/$LOCK_ICON_NAME" "$DEST_DIR/$LOCK_ICON_NAME.bak"
+    # 2) Instalar betterlockscreen si falta (agrega a PKGS_AUR si quieres auto-instalar)
+    if ! command -v betterlockscreen >/dev/null 2>&1; then
+        echo_msg "📦 Instalando betterlockscreen (AUR)..."
+        paru -S --needed --noconfirm betterlockscreen
     fi
+    
+    # 3) Crear directorios y copiar
+    mkdir -p "$DEST_DIR"
     cp -f "$SRC_PATH" "$DEST_DIR/$LOCK_ICON_NAME"
     chmod 644 "$DEST_DIR/$LOCK_ICON_NAME"
     
-    # 4) Configurar betterlockscreen.rc si no existe
-    if [[ ! -f "$HOME/.config/betterlockscreen/rc" ]]; then
-        cat > "$HOME/.config/betterlockscreen/rc" << 'EOF'
-# Betterlockscreen config - neBSPWN
+    # 4) Configurar .rc con tema Catppuccin (usando tus variables)
+    local rc_file="$HOME/.config/betterlockscreen/rc"
+    if [[ ! -f "$rc_file" ]]; then
+        cat > "$rc_file" << EOF
+# neBSPWN Betterlockscreen - Catppuccin Mocha
 bg-fill=0
 bg-color=#1e1e2e
-bg-image=$HOME/.config/betterlockscreen/rc/lock.png
+bg-image=$DEST_DIR/$LOCK_ICON_NAME
 lock-text="Bloqueado"
 text-color=#cdd6f4
 ring-color=#cdd6f4
@@ -627,7 +627,6 @@ line-color=#45475a
 insidever-color=#45475a
 ringver-color=#45475a
 key-color=#45475a
-bshl-color=#f38ba8
 verif-text=""
 time-color=#cdd6f4
 time-size=90
@@ -636,19 +635,21 @@ auth-color=#cdd6f4
 auth-size=60
 auth-font=sans-serif
 EOF
+        echo_ok "Config betterlockscreen: $rc_file"
     fi
     
-    # 5) Verificar dependencias (ya en PKGS_PACMAN_Essencials o AUR)
-    if ! command -v betterlockscreen >/dev/null 2>&1; then
-        echo "betterlockscreen no instalado. Instálalo con:" >&2
-        echo "yay -S betterlockscreen  # o tu AUR helper" >&2
-        return 1
-    fi
+    echo_ok "✅ Lock instalada: $DEST_DIR/$LOCK_ICON_NAME"
     
-    echo "✅ Lock image instalada: $DEST_DIR/$LOCK_ICON_NAME"
-    echo "🎨 Config: $HOME/.config/betterlockscreen/rc"
+    # Hotkey para sxhkd (opcional)
+    local sxhkdrc="$HOME/.config/sxhkd/sxhkdrc"
+    if [[ -f "$sxhkdrc" ]] && ! grep -q "betterlockscreen" "$sxhkdrc"; then
+        echo "
+# Lock screen (Super + L)
+super + l
+    betterlockscreen -l dimblur" >> "$sxhkdrc"
+        echo_ok "Hotkey Super+L agregada a sxhkdrc"
+    fi
 }
-
 
 
 # 🚀 EJECUCIÓN
@@ -662,13 +663,14 @@ sudo pacman -Syu --noconfirm
 
 setup_dependecies
 deploy_dotfiles
-install_betterlockscreen_lock
 setup_themes
 setup_zsh
 setup_qt
 setup_sddm
 setup_dns
 setup_firewall
+install_betterlockscreen_lock
+
 
 # Limpieza final
 rm -rf "$NE_TMP_REPO"
