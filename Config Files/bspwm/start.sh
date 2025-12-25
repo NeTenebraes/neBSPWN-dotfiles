@@ -16,3 +16,6 @@ pgrep unclutter || unclutter -idle 5 -root &
 killall -q conky
 
 (sleep 3 && conky -c /home/netenebrae/.config/conky/conky.conf) &
+# Al final de bspwmrc (aún más seguro)
+pgrep xautolock || xautolock -time 5 -locker "betterlockscreen -l" &
+pgrep -f "sleep.*dpms" || (sleep 3600 && xset dpms force off) &

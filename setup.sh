@@ -36,7 +36,7 @@ PKGS_PACMAN_optionals=(
 )
 
 PKGS_AUR=(
-    "catppuccin-cursors-mocha" "papirus-icon-theme" "catppuccin-gtk-theme-mocha"
+    "catppuccin-cursors-mocha" "papirus-icon-theme" "catppuccin-gtk-theme-mocha" "xautolock"
 )
 
 PKGS_AUR_Optionals=(
@@ -578,109 +578,75 @@ sudo systemctl enable --now ufw
     fi
 }
 
-setup_ciberseguridad() {
-    # EXACTO lo que hacían tus scripts originales [file:44][file:43]
+# Función para instalar lock.png de betterlockscreen usando variables existentes
+install_betterlockscreen_lock() {
+    set -e  # Ya lo tienes global
     
-    echomsg "🛡️ CIBERSEGURIDAD (Burp + Caido)"
-    echo "  • Burp Suite Community + sandbox fix"
-    echo "  • Caido latest + desktop entry"
-    echo ""
+    local IMAGE_REL_PATH="neBSPWN-dotfiles/Config Files/bspwm/lock.png"
+    local SRC_PATH="$DOTFILES_DIR/$IMAGE_REL_PATH"
+    local DEST_DIR="$HOME/.config/betterlockscreen/rc"
+    local LOCK_ICON_NAME="lock.png"
     
-    read -r -p "¿Instalar? [y/N] " choice
-    [[ "$choice" =~ ^[YyEeSs]$ ]] || { echoskip "Saltando"; return 0; }
-    
-    # === BURP (EXACTO tu script burp) ===
-    if [[ $EUID -ne 0 ]]; then
-        echoerr "Burp necesita sudo"
+    # 1) Verificar que el repositorio esté clonado y la imagen exista
+    if [[ ! -d "$DOTFILES_DIR" ]]; then
+        echo "Error: $DOTFILES_DIR no existe. Ejecuta deploy_dotfiles primero." >&2
         return 1
     fi
     
-    REAL_USER=${SUDO_USER:-$USER}
-    USER_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
-    
-    # Verificar si ya existe
-    BURP_BIN="/home/$REAL_USER/BurpSuiteCommunity/BurpSuiteCommunity"
-    WRAPPER="$USER_HOME/.local/bin/burp"
-    
-    if [[ -x "$BURP_BIN" && -x "$WRAPPER" ]]; then
-        echook "Burp YA INSTALADO"
-    else
-        local installer="/tmp/burpsuite_community.sh"
-        curl -L -o "$installer" "https://portswigger.net/burp/releases/download?product=community&type=Linux"
-        chmod +x "$installer"
-        
-        sudo -u "$REAL_USER" bash "$installer" || true
-        
-        # Fix sandbox EXACTO
-        local SB_PATH=$(find "$USER_HOME" -name "chrome-sandbox" -path "*BurpSuiteCommunity*" 2>/dev/null | head -n1)
-        [[ -n "$SB_PATH" ]] && {
-            chown root:root "$SB_PATH"
-            chmod 4755 "$SB_PATH"
-            echook "Sandbox fixed: $SB_PATH"
-        }
-        
-        # Wrapper EXACTO
-        cat > "$WRAPPER" << EOF
-#!/bin/bash
-export _JAVA_AWT_WM_NONREPARENTING=1
-export _JAVA_OPTIONS='-Dawt.toolkit.name=MToolkit'
-"$BURP_BIN" "\$@"
-EOF
-        chmod +x "$WRAPPER"
-        chown "$REAL_USER:$REAL_USER" "$WRAPPER"
-        
-        # PATH
-        [[ ! -d "$USER_HOME/.local/bin" ]] && mkdir -p "$USER_HOME/.local/bin"
-        grep -q ".local/bin" "$USER_HOME/.bashrc" 2>/dev/null || 
-            echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$USER_HOME/.bashrc"
-        
-        rm -f "$installer"
-        echook "Burp → burp"
+    if [[ ! -f "$SRC_PATH" ]]; then
+        echo "Error: Imagen no encontrada en $SRC_PATH" >&2
+        return 1
     fi
     
-    # === CAIDO (EXACTO tu script fix-caido) ===
-    local DIR="$HOME/.local/share/ciber"
-    local BINDIR="$HOME/bin"
+    # 2) Crear directorios necesarios
+    mkdir -p "$DEST_DIR"
     
-    mkdir -p "$BINDIR" "$DIR/tmp" "$HOME/.local/bin" "$HOME/.local/share/applications"
+    # 3) Copiar imagen con backup si existe
+    if [[ -f "$DEST_DIR/$LOCK_ICON_NAME" ]]; then
+        mv "$DEST_DIR/$LOCK_ICON_NAME" "$DEST_DIR/$LOCK_ICON_NAME.bak"
+    fi
+    cp -f "$SRC_PATH" "$DEST_DIR/$LOCK_ICON_NAME"
+    chmod 644 "$DEST_DIR/$LOCK_ICON_NAME"
     
-    local CAIDO_VERSION=$(curl -s https://api.github.com/repos/caido/caido/releases/latest | grep tag_name | sed -E 's/.*"([^"]+)".*/\1/')
-    local CAIDO_APPIMAGE="$BINDIR/caido-desktop-$CAIDO_VERSION-linux-x86_64.AppImage"
-    local CAIDO_INSTALLED=$(cat "$DIR/caidoversion.txt" 2>/dev/null || echo "none")
-    
-    if [[ "$CAIDO_INSTALLED" != "$CAIDO_VERSION" ]]; then
-        echomsg "DESCARGANDO Caido v$CAIDO_VERSION..."
-        rm -f "$BINDIR/caido-desktop-*.AppImage"
-        wget "https://caido.download/releases/$CAIDO_VERSION/caido-desktop-$CAIDO_VERSION-linux-x86_64.AppImage" -O "$CAIDO_APPIMAGE"
-        chmod +x "$CAIDO_APPIMAGE"
-        echo "$CAIDO_VERSION" > "$DIR/caidoversion.txt"
-    else
-        echook "Caido v$CAIDO_VERSION ya instalado"
+    # 4) Configurar betterlockscreen.rc si no existe
+    if [[ ! -f "$HOME/.config/betterlockscreen/rc" ]]; then
+        cat > "$HOME/.config/betterlockscreen/rc" << 'EOF'
+# Betterlockscreen config - neBSPWN
+bg-fill=0
+bg-color=#1e1e2e
+bg-image=$HOME/.config/betterlockscreen/rc/lock.png
+lock-text="Bloqueado"
+text-color=#cdd6f4
+ring-color=#cdd6f4
+key-hl-color=#f38ba8
+bshl-color=#f38ba8
+separator-color=000000
+inside-color=#1e1e2e
+line-uses-inside=1
+line-color=#45475a
+insidever-color=#45475a
+ringver-color=#45475a
+key-color=#45475a
+bshl-color=#f38ba8
+verif-text=""
+time-color=#cdd6f4
+time-size=90
+time-font=sans-serif
+auth-color=#cdd6f4
+auth-size=60
+auth-font=sans-serif
+EOF
     fi
     
-    # Icono + symlinks EXACTO
-    rm -rf "$HOME/.local/share/icons/hicolor" "$HOME/.local/share/icons/caido"
-    mkdir -p "$HOME/.local/share/icons"
-    wget -q "https://cdn.brandfetch.io/idFdZwHnw/500?h=500&theme=dark" -O "$HOME/.local/share/icons/caido.png"
+    # 5) Verificar dependencias (ya en PKGS_PACMAN_Essencials o AUR)
+    if ! command -v betterlockscreen >/dev/null 2>&1; then
+        echo "betterlockscreen no instalado. Instálalo con:" >&2
+        echo "yay -S betterlockscreen  # o tu AUR helper" >&2
+        return 1
+    fi
     
-    ln -sf "$CAIDO_APPIMAGE" "$BINDIR/caido"
-    ln -sf "$BINDIR/caido" "$HOME/.local/bin/caido"
-    
-    cat > "$HOME/.local/share/applications/caido.desktop" << EOF
-[Desktop Entry]
-Name=CaiDO $CAIDO_VERSION
-Comment=Web Security Testing Proxy
-Exec=$BINDIR/caido --no-sandbox
-Icon=caido
-Terminal=false
-Type=Application
-Categories=Network;Security;Hacking;
-StartupWMClass=Caido
-EOF
-    
-    update-desktop-database "$HOME/.local/share/applications" 2>/dev/null || true
-    
-    echook "Ciberseguridad OK → burp | caido"
+    echo "✅ Lock image instalada: $DEST_DIR/$LOCK_ICON_NAME"
+    echo "🎨 Config: $HOME/.config/betterlockscreen/rc"
 }
 
 
@@ -694,6 +660,7 @@ echo_msg "   Integración SDDM Black Hole Edition"
 sudo pacman -Syu --noconfirm
 
 setup_dependecies
+install_betterlockscreen_lock
 setup_themes
 setup_zsh
 deploy_dotfiles
@@ -701,7 +668,6 @@ setup_qt
 setup_sddm
 setup_dns
 setup_firewall
-setup_ciberseguridad
 
 # Limpieza final
 rm -rf "$NE_TMP_REPO"

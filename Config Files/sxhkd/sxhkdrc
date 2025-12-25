@@ -95,4 +95,6 @@ super + ctrl + alt + {Left,Down,Up,Right}
 
 # set the node flags
 #super + ctrl + {m,x,y,z}
-#	bspc node -g {marked,locked,sticky,private}
+
+super + shift + l
+    betterlockscreen -l dimblur
