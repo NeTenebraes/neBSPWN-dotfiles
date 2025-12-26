@@ -476,8 +476,7 @@ local kvantum_config_file="$kvantum_config_dir/kvantum.kvconfig"
 local kvantum_path="/usr/share/Kvantum"
 
 # 🔧 EXTRAER nombre base: "catppuccin-mocha-mauve-standard+default" → "catppuccin-mocha-mauve"
-local kvantum_theme=$(echo "$THEMEDEFAULT" | sed 's|-standard\+.*||' | sed 's|-hdpi||' | sed 's|-xhdpi||')
-
+local kvantum_theme=$(echo "$THEME_DEFAULT" | sed 's|-standard\+.*||' | sed 's|-hdpi||' | sed 's|-xhdpi||')
 echo_msg "🌑 GTK '$THEMEDEFAULT' → Kvantum '$kvantum_theme'"
 
 if [[ -d "$kvantum_path/$kvantum_theme" ]]; then
@@ -497,7 +496,6 @@ theme=KvArcDark
 EOF
     echo_ok "✅ Kvantum: KvArcDark (fallback)[file:19]"
 fi
-
 
     # 4. Iniciar servicios de Portal (Run-time fix para la sesión actual)
     if ! pgrep -f "xdg-desktop-portal" >/dev/null; then

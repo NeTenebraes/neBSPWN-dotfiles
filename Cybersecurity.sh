@@ -362,7 +362,7 @@ setup_personal_browser() {
     # Launcher CON RUTAS ABSOLUTAS (ROFI OK)
     cat > "$APP_DIR/${PERSONAL_BROWSER}-personal-firejail.desktop" << EOF
 [Desktop Entry]
-Name=${PERSONAL_BROWSER^} (Personal ✓)
+Name=${PERSONAL_BROWSER^} (Personal)
 Comment=${PERSONAL_BROWSER^} Firejail - File Uploads OK
 Exec=$FULL_FIREJAIL --profile=$FULL_PROFILE $FULL_BROWSER %u
 Icon=${PERSONAL_BROWSER}

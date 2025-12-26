@@ -1,51 +1,39 @@
+# ~/.config/dunst/dunstrc
 [global]
-    # --- Apariencia y Fuente ---
     font = JetBrainsMono Nerd Font 10
-    
-    # --- POSICIÓN: ABAJO A LA IZQUIERDA ---
-    # Define la esquina de origen
+
+    # POSICIÓN
     origin = bottom-right
-    
-    # Separación del borde (Horizontal x Vertical)
-    # 30x30 da un margen estético para que no "toque" el marco del monitor
     offset = 30x30
-    
-    # Tamaño (Ancho x Alto)
-    # Ancho fijo de 350-400px es ideal para leer logs/alertas sin cortar texto
+
+    # Tamaño (puedes migrar luego a sintaxis nueva)
     width = 380
     height = 300
-    
-    # Cantidad máxima de notificaciones apiladas
+
     notification_limit = 5
-    
-    # --- Colores Globales (Tema RCE / Rojo) ---
-    frame_color = "#ff2a2a"  # Rojo intenso
+
+    # COLORES
+    frame_color = "#ff2a2a"
     separator_color = frame
-    
-    # Grosor del borde
     frame_width = 2
-    
-    # Barra de progreso
     highlight = "#ff2a2a"
-    
-    # --- IMÁGENES / ICONOS ---
+
+    # ICONOS
     icon_position = left
     max_icon_size = 70
-    
-    # Espaciado
+    icon_theme = Papirus-Dark
+
+    # ESPACIADO
     padding = 12
     horizontal_padding = 16
     text_icon_padding = 16
 
-    # Extras
+    # TEXTO
     markup = full
     format = "<b>%s</b>\n%b"
     corner_radius = 6
-    
-    # Transparencia (Opcional, 0 es sólido)
     transparency = 0
 
-# (Mantén las secciones de urgencia con el fondo negro/rojo que definimos antes)
 [urgency_low]
     background = "#0f0f0f"
     foreground = "#888888"

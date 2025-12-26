@@ -3,14 +3,28 @@
 #
 
 # Captura toda la pantalla
+# Pantalla completa → portapapeles + notificación (icono screenshot)
 Print
-    maim | xclip -selection clipboard -t image/png
+    maim | xclip -selection clipboard -t image/png && \
+    notify-send "Screenshot" "Pantalla completa copiada al portapapeles" \
+        -i /usr/share/icons/Papirus-Dark/48x48/apps/accessories-screenshot.svg -t 1500
 
+# Selección de área → portapapeles + notificación (icono screenshot)
 shift + Print
-    maim -s | xclip -selection clipboard -t image/png
+    maim -s | xclip -selection clipboard -t image/png && \
+    notify-send "Screenshot" "Área seleccionada copiada al portapapeles" \
+        -i /usr/share/icons/Papirus-Dark/48x48/apps/accessories-screenshot.svg -t 1500
 
-ctrl + Print 
-    bash -c "maim ~/Pictures/screenshots/screenshot_$(date +'%Y-%m-%d_%H-%M-%S').png"
+# Pantalla completa → archivo + miniatura real del screenshot
+ctrl + Print
+    bash -c ' \
+        DIR="$HOME/Pictures/screenshots"; \
+        mkdir -p "$DIR"; \
+        FILE="$DIR/screenshot_$(date +\"%Y-%m-%d_%H-%M-%S\").png"; \
+        maim \"$FILE\" && \
+        notify-send \"Screenshot guardada\" \"$FILE\" -i \"$FILE\" -t 3000 \
+    '
+
 
 # terminal emulator
 super + Return
