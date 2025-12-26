@@ -18,4 +18,9 @@ killall -q conky
 (sleep 3 && conky -c /home/netenebrae/.config/conky/conky.conf) &
 # Al final de bspwmrc (aún más seguro)
 pgrep xautolock || xautolock -time 5 -locker "betterlockscreen -l" &
-pgrep -f "sleep.*dpms" || (sleep 3600 && xset dpms force off) &
+
+
+# 3. Configuración de pantalla (Evita suspensión, apaga a la hora)
+xset s off               # Desactiva el protector de pantalla clásico
+xset -dpms               # Resetea DPMS
+xset dpms 0 0 3600 &     # 0 standby, 0 suspend, 3600 (1 hora) para OFF total

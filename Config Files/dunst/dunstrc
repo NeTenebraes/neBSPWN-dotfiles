@@ -1,4 +1,3 @@
-# ~/.config/dunst/dunstrc
 [global]
     font = JetBrainsMono Nerd Font 10
 
@@ -6,8 +5,8 @@
     origin = bottom-right
     offset = 30x30
 
-    # Tamaño (puedes migrar luego a sintaxis nueva)
-    width = 380
+    # TAMAÑO (sintaxis legacy, puedes cambiar luego)
+    width = 450
     height = 300
 
     notification_limit = 5
@@ -19,9 +18,12 @@
     highlight = "#ff2a2a"
 
     # ICONOS
-    icon_position = left
-    max_icon_size = 70
     icon_theme = Papirus-Dark
+    icon_position = left
+    max_icon_size = 50
+    min_icon_size = 32
+    enable_recursive_icon_lookup = true
+    default_icon = /usr/share/icons/Papirus-Dark/48x48/status/notification-network-wired.svg
 
     # ESPACIADO
     padding = 12
@@ -31,6 +33,7 @@
     # TEXTO
     markup = full
     format = "<b>%s</b>\n%b"
+    ignore_newline = no
     corner_radius = 6
     transparency = 0
 
@@ -49,3 +52,26 @@
     foreground = "#ffcccc"
     frame_color = "#ff0000"
     timeout = 0
+
+# ===============================
+#  OVERRIDES NETWORKMANAGER
+#  (usa solo iconos que EXISTEN)
+# ===============================
+
+# Cualquier conexión establecida (cable o similar)
+[nm-wired-connected]
+    summary = *Connection Established*
+    new_icon = /usr/share/icons/Papirus-Dark/48x48/status/notification-network-ethernet-connected.svg
+
+# Cualquier desconexión
+[nm-disconnected]
+    summary = *Disconnected*
+    new_icon = /usr/share/icons/Papirus-Dark/48x48/status/notification-network-ethernet-disconnected.svg
+
+    [nm-clean-title-connected]
+    summary = *(A) Connection Established*
+    new_summary = Connection Established
+
+[nm-clean-title-disconnected]
+    summary = *(A) Disconnected*
+    new_summary = Disconnected
