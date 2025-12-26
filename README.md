@@ -1,4 +1,4 @@
-# neBSPWN dotfiles
+# Entorno de trabajo para Ciberseguridad
 
 Mi espacio de trabajo para **ciberseguridad, hacking ético y desarrollo en Linux**.  
 
@@ -6,7 +6,7 @@ Mi espacio de trabajo para **ciberseguridad, hacking ético y desarrollo en Linu
 
 El resultado es un entorno minimalista basado en **bspwm**, con **Rofi**, **Polybar**, **Conky**, **Kitty** y una paleta visual **Catppuccin Mocha**, pensado para mantenerse fluido incluso con múltiples herramientas de seguridad abiertas.
 
-![Desktop](https://github.com/NeTenebraes/neBSPWN-dotfiles/blob/main/screeshots/Main.png)
+![Desktop](https://github.com/NeTenebraes/neBSPWM-dotfiles/blob/main/screeshots/Main.png)
 
 > En resumen: **Una configuración que puedes reinstalar rápido, que se siente ágil en hardware antiguo, y que mantiene el mismo “flow” para programar, investigar y crear contenido.**
 
@@ -16,20 +16,20 @@ El resultado es un entorno minimalista basado en **bspwm**, con **Rofi**, **Poly
 
 ### Instalación del Entorno grafico
 ```
-curl -sSL https://raw.githubusercontent.com/NeTenebraes/neBSPWN-dotfiles/main/setup.sh | bash
+curl -sSL https://raw.githubusercontent.com/NeTenebraes/neBSPWM-dotfiles/main/setup.sh | bash
 ```
 **Reiniciar:** `systemctl reboot`
 
 
 ### Instalación de herramientas Ciberseguridad.
 ```
-curl -sSL https://raw.githubusercontent.com/NeTenebraes/neBSPWN-dotfiles/main/Cybersecurity.sh | bash
+curl -sSL https://raw.githubusercontent.com/NeTenebraes/neBSPWM-dotfiles/main/Cybersecurity.sh | bash
 ```
 **Reiniciar:** `systemctl reboot`
 
 ### Manual
 ```
-git clone https://github.com/NeTenebraes/neBSPWN-dotfiles.git
+git clone https://github.com/NeTenebraes/neBSPWM-dotfiles.git
 cd neBSPWN-dotfiles
 ./setup.sh
 ./Cybersecurity.sh
@@ -66,10 +66,10 @@ cd neBSPWN-dotfiles
 
 | Componente | Vista |
 |------------|-------|
-| Escritorio | ![Main1](https://github.com/NeTenebraes/neBSPWN-dotfiles/blob/main/screeshots/Main1.png) |
-| Escritorio | ![Main2](https://github.com/NeTenebraes/neBSPWN-dotfiles/blob/main/screeshots/Main2.png) |
-| Rofi | ![Rofi](https://github.com/NeTenebraes/neBSPWN-dotfiles/blob/main/screeshots/Rofi.png) |
-| Login Screen | ![SDDM](https://github.com/NeTenebraes/neBSPWN-dotfiles/blob/main/screeshots/SDDM.png) |
+| Escritorio | ![Main1](https://github.com/NeTenebraes/neBSPWM-dotfiles/blob/main/screeshots/Main1.png) |
+| Escritorio | ![Main2](https://github.com/NeTenebraes/neBSPWM-dotfiles/blob/main/screeshots/Main2.png) |
+| Rofi | ![Rofi](https://github.com/NeTenebraes/neBSPWM-dotfiles/blob/main/screeshots/Rofi.png) |
+| Login Screen | ![SDDM](https://github.com/NeTenebraes/neBSPWM-dotfiles/blob/main/screeshots/SDDM.png) |
 
 ---
 
