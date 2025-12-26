@@ -21,7 +21,7 @@ THEME_CURSOR_CLEAN="${THEME_CURSOR//\'/}"
 CURSOR_SIZE_CLEAN="${CURSOR_SIZE//\'/}"
 
 PKGS_PACMAN_Essencials=(
-    "git" "base-devel" "neovim" "wget" "curl" "unzip" "lsd" "sddm"
+    "git" "base-devel" "neovim" "wget" "curl" "unzip" "lsd" "sddm" "fastfetch"
     "feh" "xorg" "xorg-xinit" "nemo" "xclip" "zsh" "tmux" "htop" "bat"
     "zsh-syntax-highlighting" "zsh-autosuggestions" "python" "python-pip"
     "nodejs" "npm" "ffmpeg" "maim" "qt5ct" "qt6ct" "starship" "blueberry"
