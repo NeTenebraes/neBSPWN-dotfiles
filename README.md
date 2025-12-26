@@ -1,4 +1,4 @@
-# Entorno de trabajo para Ciberseguridad
+# neBSPWM - Entorno de trabajo para Ciberseguridad
 
 Mi espacio de trabajo para **ciberseguridad, hacking ético y desarrollo en Linux**.  
 
@@ -30,7 +30,7 @@ curl -sSL https://raw.githubusercontent.com/NeTenebraes/neBSPWM-dotfiles/main/Cy
 ### Manual
 ```
 git clone https://github.com/NeTenebraes/neBSPWM-dotfiles.git
-cd neBSPWN-dotfiles
+cd neBSPWM-dotfiles
 ./setup.sh
 ./Cybersecurity.sh
 ```
@@ -79,7 +79,7 @@ El archivo **`Cybersecurity.sh`** complementa este entorno, preparando Arch Linu
 
 ### 🔍 Qué hace
 
-- **Integra herramientas de seguridad** dentro del entorno gráfico existente, respetando la estética y el tema de **neBSPWN** (íconos, entradas en Rofi, y configuraciones en `~/.local/share/applications`).
+- **Integra herramientas de seguridad** dentro del entorno gráfico existente, respetando la estética y el tema (íconos, entradas en Rofi, y configuraciones en `~/.local/share/applications`).
 - **Instala y configura herramientas esenciales:**
   - **Burp Suite Community** → Proxy y escáner de tráfico HTTP/S, con un wrapper optimizado para Wayland/X11.
   - **Caido** → Proxy moderno alternativo a Burp, descargado dinámicamente desde GitHub y con integración directa en el menú de aplicaciones.
@@ -98,7 +98,7 @@ chmod +x Cybersecurity.sh
 ./Cybersecurity.sh
 ```
 
-> Ejecuta este script después de `setup.sh` para convertir tu entorno de neBSPWN en un laboratorio de ciberseguridad completo, coherente en diseño, rendimiento y funcionalidad.
+> Ejecuta este script después de `setup.sh` para convertir tu entorno en un laboratorio de ciberseguridad completo, coherente en diseño, rendimiento y funcionalidad.
 
 ---
 ## ⚠️ Advertencia
