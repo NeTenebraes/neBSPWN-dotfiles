@@ -27,7 +27,7 @@ PKGS_PACMAN_Essencials=(
     "nodejs" "npm" "ffmpeg" "maim" "qt5ct" "qt6ct" "starship" "blueberry"
     "glib2" "libxml2" "bspwm" "sxhkd" "polybar" "picom" "rofi" "dunst" "kitty"
     "ttf-jetbrains-mono-nerd" "ttf-font-awesome" "noto-fonts-emoji" "ttf-iosevka-nerd"  
-    "adwaita-icon-theme" "libmtp" "gvfs-mtp" "android-udev"
+    "adwaita-icon-theme" "libmtp" "gvfs-mtp" "android-udev" "conky" "pavucontrol" "polkit-gnome"
     "kvantum" "kvantum-qt5" "xdg-desktop-portal" "xdg-desktop-portal-gtk" "qt5ct" "qt6ct"
 )
 
@@ -248,67 +248,17 @@ gtk-font-name=$THEME_FONT"
     wget -qO- https://git.io/papirus-folders-install | sh
     papirus-folders -C red --theme Papirus-Dark
 
+    # GTK para root (aplica tema a apps root como gufw)
+    if [[ $EUID -ne 0 ]]; then
+    sudo mkdir -p /root/.config/gtk-3.0
+    sudo tee /root/.config/gtk-3.0/settings.ini >/dev/null << EOF
+[Settings]
+gtk-theme-name=$THEME_DEFAULT
+gtk-application-prefer-dark-theme=1
+EOF
+    fi
+
     echo_ok "🎨 Temas 100% OK"
-}
-
-setup_dns() {
-    echo_msg "🌐 CONFIGURACIÓN DNS"
-    echo -e "\nSelecciona tu proveedor DNS preferido:"
-    echo "  1) Cloudflare (1.1.1.1) - [Recomendado: Velocidad/Privacidad]"
-    echo "  2) Quad9      (9.9.9.9) - [Bloqueo de Malware]"
-    echo "  3) Google     (8.8.8.8) - [Estándar]"
-    echo "  4) Automático (ISP)     - [Por defecto de tu proveedor]"
-    echo "  5) Saltar configuración"
-    
-    read -r -p " > " dns_choice
-
-    local target_ips=""
-    local provider_name=""
-
-    case "$dns_choice" in
-        1) target_ips="1.1.1.1 1.0.0.1"; provider_name="Cloudflare" ;;
-        2) target_ips="9.9.9.9 149.112.112.112"; provider_name="Quad9" ;;
-        3) target_ips="8.8.8.8 8.8.4.4"; provider_name="Google" ;;
-        4) target_ips="auto"; provider_name="ISP (Auto)" ;;
-        *) echo_skip "Saltando configuración DNS"; return 0 ;;
-    esac
-
-    # Detectar conexión
-    if ! command -v nmcli >/dev/null; then
-        echo_err "NetworkManager no encontrado."
-        return 1
-    fi
-
-    local active_conn
-    active_conn=$(nmcli -t -f NAME connection show --active | head -n1)
-
-    if [[ -z "$active_conn" ]]; then
-        echo_skip "No hay conexión activa. Conéctate a internet primero."
-        return 0
-    fi
-
-    echo_msg "Aplicando $provider_name en conexión: '$active_conn'..."
-
-    # Aplicar cambios
-    if [[ "$target_ips" == "auto" ]]; then
-        nmcli con mod "$active_conn" ipv4.ignore-auto-dns no
-        nmcli con mod "$active_conn" ipv4.dns ""
-    else
-        nmcli con mod "$active_conn" ipv4.ignore-auto-dns yes
-        nmcli con mod "$active_conn" ipv4.dns "$target_ips"
-    fi
-
-    # Fix para /etc/resolv.conf en Arch
-    if [[ -L "/etc/resolv.conf" ]]; then
-        sudo rm -f /etc/resolv.conf
-        sudo systemctl restart NetworkManager
-        sleep 2
-        echo_ok "Enlace resolv.conf corregido."
-    else
-        nmcli con up "$active_conn" >/dev/null 2>&1
-    fi
-    
-    echo_ok "DNS configurado exitosamente: $provider_name"
 }
 
 # 🌀 Función SDDM Modularizada (Integrada)
@@ -486,7 +436,6 @@ setup_qt() {
     fi
 
     # Lógica de inyección inteligente (Idempotente)
-    # Solo añadimos si NO detectamos la configuración específica
     if ! grep -q "QT_STYLE_OVERRIDE=kvantum" "$bspwm_config"; then
         echo_msg "🔧 Inyectando variables Qt en bspwmrc..."
         
@@ -521,27 +470,34 @@ EOF
         echo_skip "Variables Qt ya presentes en bspwmrc"
     fi
 
-    # 3. Configurar Kvantum (Tema Oscuro por defecto)
-    # Evita tener que abrir kvantummanager manualmente
-    local kvantum_config_dir="$HOME/.config/Kvantum"
-    local kvantum_config_file="$kvantum_config_dir/kvantum.kvconfig"
+# 3. Configurar Kvantum (Extrae nombre base de THEMEDEFAULT)
+local kvantum_config_dir="$HOME/.config/Kvantum"
+local kvantum_config_file="$kvantum_config_dir/kvantum.kvconfig"
+local kvantum_path="/usr/share/Kvantum"
+
+# 🔧 EXTRAER nombre base: "catppuccin-mocha-mauve-standard+default" → "catppuccin-mocha-mauve"
+local kvantum_theme=$(echo "$THEMEDEFAULT" | sed 's|-standard\+.*||' | sed 's|-hdpi||' | sed 's|-xhdpi||')
+
+echo_msg "🌑 GTK '$THEMEDEFAULT' → Kvantum '$kvantum_theme'"
+
+if [[ -d "$kvantum_path/$kvantum_theme" ]]; then
+    mkdir -p "$kvantum_config_dir"
     
-    if [[ ! -f "$kvantum_config_file" ]]; then
-        echo_msg "🌑 Configurando tema Kvantum por defecto (KvArcDark)..."
-        mkdir -p "$kvantum_config_dir"
-        
-        # Configuración mínima válida para Kvantum
-        cat <<EOF > "$kvantum_config_file"
+    cat > "$kvantum_config_file" <<EOF
+[General]
+theme=$kvantum_theme
+EOF
+    
+    echo_ok "✅ Kvantum: $kvantum_theme aplicado[file:19]"
+else
+    echo_warn "❌ '$kvantum_theme' no encontrado → KvArcDark"
+    cat > "$kvantum_config_file" <<EOF
 [General]
 theme=KvArcDark
-
-[Applications]
-keepassxc=KvArcDark
 EOF
-        echo_ok "Kvantum configurado con KvArcDark"
-    else
-        echo_skip "Configuración Kvantum ya existe"
-    fi
+    echo_ok "✅ Kvantum: KvArcDark (fallback)[file:19]"
+fi
+
 
     # 4. Iniciar servicios de Portal (Run-time fix para la sesión actual)
     if ! pgrep -f "xdg-desktop-portal" >/dev/null; then
@@ -551,58 +507,6 @@ EOF
     fi
 
     echo_ok "✅ Entorno Qt completado"
-}
-
-setup_firewall() {
-    echo_msg "🛡️ CONFIGURACIÓN DE FIREWALL (UFW)"
-    echo -e "\n¿Deseas instalar y configurar el Firewall (UFW) ahora? (y/N)"
-    read -r -p " > " ufw_choice
-
-    if [[ ! "$ufw_choice" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-        echo_skip "Saltando configuración de Firewall."
-        return 0
-    fi
-
-    # 1. Instalación
-    echo_msg "Instalando paquetes UFW..."
-    # Usamos la variable de dependencias o instalamos directo
-    sudo pacman -S --needed --noconfirm ufw gufw
-
-    # 2. Resetear a estado limpio antes de configurar
-    # Esto evita conflictos si ya había reglas viejas
-    sudo ufw --force reset >/dev/null
-
-    # 3. Reglas Base (Bloquear todo lo entrante)
-    echo_msg "Aplicando políticas por defecto (Deny Incoming / Allow Outgoing)..."
-    sudo ufw default deny incoming
-    sudo ufw default allow outgoing
-
-    # 4. Preguntar por SSH
-    echo -e "\n¿Deseas permitir conexiones SSH entrantes (Puerto 22)? (y/N)"
-    echo "   (Útil si administras esta PC desde otro dispositivo)"
-    read -r -p " > " ssh_choice
-
-    if [[ "$ssh_choice" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-        sudo ufw allow ssh
-        echo_ok "Regla SSH (Puerto 22) agregada."
-    else
-        echo_skip "SSH mantenido cerrado."
-    fi
-
-    # 5. Activar Firewall
-# Activa UFW respondiendo "y" automáticamente a cualquier advertencia
-echo "y" | sudo ufw enable
-sudo systemctl enable --now ufw
-
-
-    # 6. Verificación Final
-    if sudo ufw status | grep -q "active"; then
-        echo_ok "✅ Firewall configurado y ACTIVO."
-        echo -e "\nEstado actual:"
-        sudo ufw status verbose
-    else
-        echo_err "Hubo un problema activando UFW."
-    fi
 }
 
 # Función para instalar lock.png de betterlockscreen usando variables existentes
@@ -696,8 +600,6 @@ setup_themes
 setup_zsh
 setup_qt
 setup_sddm
-setup_dns
-setup_firewall
 install_betterlockscreen_lock
 
 
