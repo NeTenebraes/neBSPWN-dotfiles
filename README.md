@@ -33,9 +33,7 @@ El resultado es un entorno minimalista basado en **bspwm**, con **Rofi**, **Poly
 ## Instalación
 
 > **Aviso importante:**  
-> Antes de ejecutar **cualquier script** en tu sistema, **siempre revisa su contenido**.  
-> Nunca ejecutes comandos remotos sin verificar su origen.  
-> Este entorno es open source: Puedes auditar y modificar los scripts en cualquier momento.  
+> Antes de ejecutar **cualquier script** en tu sistema, **siempre revisa su contenido**. Nunca ejecutes comandos remotos sin verificar su origen.  
 
 ### Instalación del Entorno grafico
 ```
@@ -57,6 +55,8 @@ cd neBSPWM-dotfiles
 ./Cybersecurity.sh
 ```
 **Reiniciar:** `systemctl reboot`
+
+> Este entorno es open source: Puedes auditar y modificar los scripts en cualquier momento. 
 
 ---
 
