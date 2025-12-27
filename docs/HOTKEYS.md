@@ -1,6 +1,7 @@
 # 🧭 Guía de Uso — neBSPWN Hotkeys
 
 Este entorno está completamente controlado por **atajos de teclado** mediante `sxhkd`.  
+
 Si estás acostumbrado a interfaces tradicionales, piensa en esto como una forma más rápida y precisa de moverte: **todo el sistema responde a tus manos, sin necesidad del ratón.**
 
 ---
@@ -9,6 +10,8 @@ Si estás acostumbrado a interfaces tradicionales, piensa en esto como una forma
 
 | Acción | Tecla |
 |--------|-------|
+| **Cerrar ventana activa** | `Super + Q` |
+| **Forzar cierre (kill process)** | `Super + Shift + Q` |
 | **Cambiar el foco entre ventanas** | `Super + ← ↑ ↓ →` |
 | **Mover ventanas a otra posición** | `Super + Shift + ← ↑ ↓ →` |
 | **Expandir ventana (resize dinámico)** | `Super + Ctrl + ← ↑ ↓ →` |
@@ -54,8 +57,6 @@ Perfectas para documentar vulnerabilidades o sesiones de trabajo.
 
 | Acción | Tecla |
 |--------|-------|
-| **Cerrar ventana activa** | `Super + Q` |
-| **Forzar cierre (kill process)** | `Super + Shift + Q` |
 | **Cambiar estado del layout:** |  |
 | `Super + T` → *tiled* |  |
 | `Super + S` → *floating* |  |
@@ -66,10 +67,9 @@ El resto funcionará mejor en **tiling**, aprovechando toda la pantalla.
 
 ---
 
-## 🧘‍♂️ En resumen
+## En resumen
 
 Pocas teclas, mucho control.  
 Con estos atajos puedes navegar, abrir, organizar y capturar todo sin quitar las manos del teclado.  
-**La terminal y Rofi son el corazón del flujo de trabajo.**
 
-> *“Una vez aprendes los atajos, dejas de usar el escritorio: el escritorio empieza a usarte a ti.”*
+**La terminal y Rofi son el corazón del flujo de trabajo.**
