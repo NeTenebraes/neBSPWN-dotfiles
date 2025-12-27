@@ -56,5 +56,3 @@ Perfectas para documentar vulnerabilidades o sesiones de trabajo.
 | **Modo Mosaico (Tiled)** | `Super + T` |
 | **Modo Flotante (Floating)** | `Super + S` |
 | **Pantalla Completa (Fullscreen)** | `Super + F` |
-| **Cerrar Ventana** | `Super + Q` |
-| **Cambiar Enfoque** | `Super + Flechas` |
