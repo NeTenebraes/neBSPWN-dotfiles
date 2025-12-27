@@ -41,8 +41,8 @@ Puedes lanzar cualquier aplicación desde ahí: *navegadores, herramientas de se
 
 | Acción | Tecla |
 |--------|-------|
-| **Captura completa → Archivo (~/Pictures/screenshots)** | `Ctrl + Print` |
-| **Captura completa → Portapapeles (listo para pegar)** | `Print` |
+| **Captura completa → Archivo (~/Pictures/screenshots)** | `Print` |
+| **Captura completa → Portapapeles (listo para pegar)** | `Ctrl + Print` |
 | **Captura por selección → Portapapeles** | `Shift + Print` |
 
 🖼️ Las capturas se guardan automáticamente con nombre y fecha.  
@@ -58,7 +58,6 @@ Perfectas para documentar vulnerabilidades o sesiones de trabajo.
 | **Forzar cierre (kill process)** | `Super + Shift + Q` |
 | **Cambiar estado del layout:** |  |
 | `Super + T` → *tiled* |  |
-| `Super + Shift + T` → *pseudo‑tiled* |  |
 | `Super + S` → *floating* |  |
 | `Super + F` → *fullscreen* |  |
 
