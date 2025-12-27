@@ -67,7 +67,7 @@ cd neBSPWM-dotfiles
 - **Launcher:** Rofi (drun mode).
 - **Status Bar:** Polybar con módulos de:
   - Tray, batería, volumen, workspaces.
-  - **detección de IP local / estado de red** y accesos rápidos a herramientas de ciberseguridad. 
+  - **Detección de Tarjetas de red y su IP local**
 - **System Widget:** Conky personalizado:
   - muestra info de sistema, red, almacenamiento y procesos activos
   - incluye panel de **Network & Security** con IP local, DNS, ping y estado de firewall/VPN, como en el dashboard del escritorio.
