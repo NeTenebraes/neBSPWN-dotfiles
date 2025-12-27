@@ -52,10 +52,9 @@ Perfectas para documentar vulnerabilidades o sesiones de trabajo.
 ## ⚙️ Administración de Ventanas
 
 | Acción | Tecla |
-|--------|-------|
-| **Cambiar estado del layout:** |  |
-| `Super + T` → *tiled* |  |
-| `Super + S` → *floating* |  |
-| `Super + F` → *fullscreen* |  |
-
-🪟 *Consejo:* usa el modo **floating** solo para ventanas que lo necesiten (Burp Suite, Caido, etc.). El resto funcionará mejor en **tiling**, aprovechando toda la pantalla.
+| :--- | :--- |
+| **Modo Mosaico (Tiled)** | `Super + T` |
+| **Modo Flotante (Floating)** | `Super + S` |
+| **Pantalla Completa (Fullscreen)** | `Super + F` |
+| **Cerrar Ventana** | `Super + Q` |
+| **Cambiar Enfoque** | `Super + Flechas` |
