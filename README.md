@@ -158,6 +158,4 @@ chmod +x Cybersecurity.sh
 > 
 > 🔧 **Compatibilidad:** Este script está diseñado para una **instalación limpia de Arch Linux** o derivados como **Manjaro** y **EndeavourOS**.  
 > 
-> 🖥️ Al finalizar, **SDDM se activa automáticamente** y tu sistema quedará listo para iniciar sesión en **bspwm** con todo el entorno configurado.  
->
-> Si algo se rompe… respira, saca un pantallazo y **abre un issue en GitHub** o mándame mensaje. Cada bug ayuda a mejorar este proyecto, versión tras versión.
+> Si algo se rompe: Saca un pantallazo y **abre un issue en GitHub**. Cada bug ayuda a mejorar este proyecto, versión tras versión.
