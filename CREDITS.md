@@ -26,7 +26,6 @@
 - **Tipo de arte:** Imágenes generadas con IA, estética **cyberpunk / anime**.  
 - **Uso en neBSPWM:**  
   - Fondos de pantalla principales del entorno gráfico (escritorio con bspwm).  
-  - Ajustados a resoluciones 1080p / 4K según el monitor.
 - **Nota:**  
   - Los wallpapers utilizados pertenecen a su autor original.  
   - Su uso aquí es **decorativo/personal** dentro de este entorno de trabajo.
