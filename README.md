@@ -66,7 +66,7 @@ cd neBSPWM-dotfiles
 - **Display Manager:** SDDM.
 - **Launcher:** Rofi (drun mode).
 - **Status Bar:** Polybar con módulos de:
-  - Tray, batería, volumen, workspaces.
+  - Administración de sistema (Power menu, workspaces, volumen, batería, System Tray).
   - **Detección de Tarjetas de red y su IP local**
 - **System Widget:** Conky personalizado:
   - muestra info de sistema, red, almacenamiento y procesos activos
