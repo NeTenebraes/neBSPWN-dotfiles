@@ -10,6 +10,7 @@ Si estás acostumbrado a interfaces tradicionales, piensa en esto como una forma
 
 | Acción | Tecla |
 |--------|-------|
+| **Abrir el lanzador de programas (Rofi)** | `Super + D` |
 | **Cerrar ventana activa** | `Super + Q` |
 | **Cambiar el foco entre ventanas** | `Super + ← ↑ ↓ →` |
 | **Mover ventanas a otra posición** | `Super + Shift + ← ↑ ↓ →` |
@@ -18,8 +19,8 @@ Si estás acostumbrado a interfaces tradicionales, piensa en esto como una forma
 | **Cambiar / Enviar ventana a workspace** | `Super + 1–5` |
 | **Alternar layout (tiling / monocle)** | `Super + Space` |
 
-🧩 *Sugerencia:* juega con la combinación **Ctrl / Alt / Shift** mientras mueves ventanas.  
-Es la forma más rápida de organizar ventanas en pantalla sin perder flujo.
+💡 Una vez entiendas cómo abrir **Rofi**, dominarás el resto.  
+Puedes lanzar cualquier aplicación desde ahí: *navegadores, herramientas de seguridad o configuraciones del sistema.*
 
 ---
 
@@ -28,14 +29,10 @@ Es la forma más rápida de organizar ventanas en pantalla sin perder flujo.
 | Acción | Tecla |
 |--------|-------|
 | **Abrir la terminal (Kitty)** | `Super + Enter` |
-| **Abrir el lanzador de programas (Rofi)** | `Super + D` |
 | **Bloquear pantalla (Betterlockscreen)** | `Super + Shift + L` |
 | **Recargar sxhkd (atajos)** | `Super + Shift + R` |
 | **Reiniciar bspwm** | `Super + Alt + R` |
 | **Cerrar sesión o salir del entorno** | `Super + Alt + Q` |
-
-💡 Una vez entiendas cómo abrir **Rofi**, dominarás el resto.  
-Puedes lanzar cualquier aplicación desde ahí: *navegadores, herramientas de seguridad o configuraciones del sistema.*
 
 ---
 
@@ -61,14 +58,4 @@ Perfectas para documentar vulnerabilidades o sesiones de trabajo.
 | `Super + S` → *floating* |  |
 | `Super + F` → *fullscreen* |  |
 
-🪟 *Consejo:* usa el modo **floating** solo para ventanas que lo necesiten (Burp Suite, Caido, etc.).  
-El resto funcionará mejor en **tiling**, aprovechando toda la pantalla.
-
----
-
-## En resumen
-
-Pocas teclas, mucho control.  
-Con estos atajos puedes navegar, abrir, organizar y capturar todo sin quitar las manos del teclado.  
-
-**La terminal y Rofi son el corazón del flujo de trabajo.**
+🪟 *Consejo:* usa el modo **floating** solo para ventanas que lo necesiten (Burp Suite, Caido, etc.). El resto funcionará mejor en **tiling**, aprovechando toda la pantalla.
