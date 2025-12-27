@@ -22,7 +22,7 @@ case "$1" in
     # Guarda timestamp del click
     date +%s > "$STATE_FILE"
     # Lanza rofi sin bloquear
-    setsid /home/netenebrae/.config/rofi/powermenu/powermenu.sh >/dev/null 2>&1 &
+    setsid "$HOME/.config/rofi/powermenu/powermenu.sh" >/dev/null 2>&1 &
     ;;
 
   status|*)
