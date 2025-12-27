@@ -1,10 +1,4 @@
-# 🎨 Créditos - neBSPWM dotfiles
-
-> **Proyecto:** neBSPWM – Entorno de trabajo para Ciberseguridad en Arch Linux  
-> **Autor principal:** [NeTenebrae](https://github.com/NeTenebraes)  
-> **Licencia principal del proyecto:** [MIT](LICENSE)
-
----
+# Créditos 
 
 ## 🌌 Temas y componentes visuales
 
@@ -16,7 +10,7 @@
 - **Uso en neBSPWM:**  
   - Tema base para la pantalla de inicio de sesión (**SDDM**).  
   - Se mantiene la estructura y funcionalidad original del proyecto.  
-  - Se modificó principalmente la **imagen de fondo** y algunos detalles de color para integrarlo con la paleta **Catppuccin Mocha** y el estilo de neBSPWM.
+  - Se modificó principalmente la **imagen de fondo** y algunos detalles de color para integrarlo con la paleta **Catppuccin Mocha** y el estilo del entorno.
 - **Características heredadas del proyecto original:**
   - Implementado sobre **Qt6**.
   - Soporte para **teclado virtual**.
@@ -36,20 +30,6 @@
 - **Nota:**  
   - Los wallpapers utilizados pertenecen a su autor original.  
   - Su uso aquí es **decorativo/personal** dentro de este entorno de trabajo.
-
----
-
-## ⚙️ Stack técnico del entorno
-
-Estos componentes no son “créditos” directos, pero forman parte fundamental del entorno:
-
-- **Window Manager:** bspwm + sxhkd  
-- **Display Manager:** SDDM (con tema basado en *sddm-astronaut-theme* de Keyitdev)  
-- **Launcher:** rofi (drun)  
-- **Status bar:** polybar + conky  
-- **Terminal:** kitty + zsh + starship  
-- **Temas:** Catppuccin Mocha (GTK/Qt) + Papirus Dark + Nerd Fonts  
-- **Otros:** dunst, picom, betterlockscreen, maim, etc.
 
 ---
 
