@@ -127,14 +127,9 @@ El archivo **`Cybersecurity.sh`** complementa este entorno, preparando Arch Linu
   - Añadidas al **PATH del usuario**.  
   - Ejecutables sin `sudo` ni elevación de privilegios innecesaria.  
 
-> En resumen: Un script que convierte tu instalación limpia de Arch en un **laboratorio de ciberseguridad funcional, seguro y visualmente coherente** en menos de 2min 🧠
+En resumen: Un script que convierte tu instalación limpia de Arch en un **laboratorio de ciberseguridad funcional, seguro y visualmente coherente** en menos de 2min 💀
 
-```
-chmod +x Cybersecurity.sh
-./Cybersecurity.sh
-```
-
-> Ejecuta este script después de `setup.sh` para convertir tu entorno en un laboratorio de ciberseguridad completo, coherente en diseño, rendimiento y funcionalidad.
+> Ejecuta este script **después** de `setup.sh` para convertir tu entorno en un laboratorio de ciberseguridad completo, coherente en diseño, rendimiento y funcionalidad.
 
 ---
 
