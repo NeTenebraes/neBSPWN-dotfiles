@@ -1,5 +1,16 @@
 # neBSPWM - Entorno de trabajo para Ciberseguridad
 
+<div align="center">
+
+![Arch Linux](https://img.shields.io/badge/Arch_Linux-11111b?style=flat&logo=arch-linux&logoColor=f38ba8)
+![bspwm](https://img.shields.io/badge/bspwm-1e1e2e?style=flat&logo=bspwm&logoColor=cdd6f4)
+![ZSH](https://img.shields.io/badge/ZSH-11111b?style=flat&logo=gnu-bash&logoColor=cba6f7)
+![Catppuccin Mocha](https://img.shields.io/badge/Catppuccin-Mocha-181825?style=flat&logo=linux&logoColor=f38ba8)
+![Cybersec Workspace](https://img.shields.io/badge/Cybersecurity-Workspace-bb002f?style=flat&logo=target&logoColor=white)
+![Hotkeys Docs](https://img.shields.io/badge/Hotkeys-Docs-313244?style=flat&logo=readthedocs&logoColor=cdd6f4)
+
+</div>
+
 Mi espacio de trabajo para **ciberseguridad, hacking ético y desarrollo en Linux**.  
 
 **Formateo mi equipo con frecuencia** y quería poder **restaurar mi entorno completo en minutos**, sin tener que volver a configurar cada detalle desde cero. Esta config esta pensada para mi trabajo en un **equipo modesto** (i3 de segunda generación y 8GB de RAM), por lo que diseñé esta configuración pensando en **rendimiento, ligereza y estabilidad**, sin sacrificar la estética ni la comodidad en largas jornadas de trabajo técnico.
@@ -7,7 +18,6 @@ Mi espacio de trabajo para **ciberseguridad, hacking ético y desarrollo en Linu
 El resultado es un entorno minimalista basado en **bspwm**, con **Rofi**, **Polybar**, **Conky**, **Kitty** y una paleta visual **Catppuccin Mocha**, pensado para mantenerse fluido incluso con múltiples herramientas de seguridad abiertas.
 
 ![Desktop](https://github.com/NeTenebraes/neBSPWM-dotfiles/blob/main/screeshots/Main.png)
-
 > En resumen: **Una configuración que puedes reinstalar rápido, que se siente ágil en hardware antiguo, y que mantiene el mismo “flow” para programar, investigar y crear contenido.**
 
 ---
@@ -48,6 +58,7 @@ cd neBSPWM-dotfiles
 - **Lock Screen:** betterlockscreen
 - **Themes:** Catppuccin Mocha + Papirus Dark
 - **Screenshots:** maim + xclip + notificaciones
+- **Guía Atajos:** [![HOTKEYS](https://img.shields.io/badge/HOTKEYS-Guide-4F46E5?style=flat&logo=keyboard&logoColor=white)](docs/HOTKEYS.md)
 
 ## 📦 Requisitos
 
