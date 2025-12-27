@@ -11,7 +11,6 @@ Si estás acostumbrado a interfaces tradicionales, piensa en esto como una forma
 | Acción | Tecla |
 |--------|-------|
 | **Cerrar ventana activa** | `Super + Q` |
-| **Forzar cierre (kill process)** | `Super + Shift + Q` |
 | **Cambiar el foco entre ventanas** | `Super + ← ↑ ↓ →` |
 | **Mover ventanas a otra posición** | `Super + Shift + ← ↑ ↓ →` |
 | **Expandir ventana (resize dinámico)** | `Super + Ctrl + ← ↑ ↓ →` |
