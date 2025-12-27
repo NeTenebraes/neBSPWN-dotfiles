@@ -15,7 +15,6 @@ $character"""
 palette = "NeTenebrae"
 
 [palettes.NeTenebrae]
-# Tu paleta original intacta
 red1 = "#f42841"
 red2 = "#ff6b7a" 
 red3 = "#b91c2c"
@@ -27,7 +26,7 @@ white = "#ffffff"
 black = "#050505"
 
 [character]
-# El cursor ahora es más técnico. Si falla el comando, cambia a una X roja brillante.
+# Si falla el comando, cambia a una X roja brillante.
 success_symbol = "[➜](bold red1)[_](bold gray3)"
 error_symbol = "[✗](bold red2)[_](bold gray3)"
 
@@ -43,7 +42,6 @@ format = "[$hostname](bold gray2):"
 disabled = false
 
 [directory]
-# CAMBIO CLAVE: De azul a rojo/gris para mantener el tema
 style = "bold gray1"
 read_only = " 🔒"
 truncation_length = 4
@@ -52,7 +50,7 @@ format = "[$path]($style)[$read_only]($style) "
 
 [git_branch]
 symbol = " "
-# Ramas de git en rojo suave en lugar de amarillo
+# Ramas de git en rojo suave
 style = "bold red2"
 format = "on [$symbol$branch]($style) "
 
@@ -63,7 +61,7 @@ format = "([$all_status$ahead_behind]($style) )"
 [time]
 disabled = false
 time_format = "%H:%M"
-# La hora en gris oscuro para no distraer
+# La hora en gris oscuro
 style = "bold gray3"
 format = "[$time]($style) "
 
